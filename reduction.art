@@ -3,8 +3,10 @@
 !configuration -> _sig:__map
 
 (* Term rewrite rules *)
--assign  _n |> __int32(_)    --- assign(_X,_n),_sig -> __done,__put(_sig,_X,_n)
--assignR _E,_sig -> _I,_sigP --- assign(_X,_E),_sig -> assign(_X,_I),_sigP
+-assignI _n |> __int32(_)               --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignD _n |> __real64(_)              --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignB _n |> __bool(_)                --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignR _E,_sig -> _I,_sigP            --- assign(_X,_E),_sig -> assign(_X,_I),_sigP
 
 -deref --- deref(_R),_sig -> __get(_sig,_R),_sig
 
@@ -56,11 +58,15 @@ operand ::= __real64^^ | __int32^^ | deref^^ | __string^^ | plugin^^
 deref   ::= &ID
 __int32 ::= &INTEGER
 __real64 ::= &REAL
+__bool ::= &BOOL
 __string::= &STRING_SQ
 
 (* GCD examples *)
 //!try seq(assign(a,6), seq(assign(b,9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a))))))), __map
-!try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a;"
+//!try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a;"
+!try assign(a, 10), __map
+!try assign(b, 5.0), __map
+!try assign(c, true),__map
 
 (* Plugin test *)
 //!try "plugin('init');"
