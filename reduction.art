@@ -19,11 +19,15 @@
 
 -while --- while(_E,_C),_sig -> if(_E,seq(_C,while(_E,_C)),__done),_sig
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 -gtI  _n1 |> __int32(_)  _n2 |> __int32(_)       --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
 -gtD  _n1 |> __real64(_)  _n2 |> __real64(_)     --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
 -gtRi _n |> __int32(_)  _E2,_sig -> _I2,_sigP    --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
 -gtRd _n |> __real64(_)  _E2,_sig -> _I2,_sigP   --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
 -gtL _E1,_sig -> _I1,_sigP                       --- gt(_E1,_E2),_sig  -> gt(_I1,_E2),_sigP
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -neI  _n1 |> __int32(_) _n2 |> __int32(_)        --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
 -neD  _n1 |> __real64(_) _n2 |> __real64(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
@@ -36,6 +40,28 @@
 -subRi _n |> __int32(_) _E2,_sig -> _I2,_sigP    --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
 -subRd _n |> __real64(_) _E2,_sig -> _I2,_sigP   --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
 -subL _E1,_sig -> _I1,_sigP                      --- sub(_E1,_E2),_sig -> sub(_I1,_E2),_sigP
+
+-addI _L |> __int32(_) _R |> __int32(_)          --- add(_L, _R),_sig -> __add(_L, _R),_sig
+-addD _L |> __real64(_) _R |> __real64(_)        --- add(_L, _R),_sig -> __add(_L, _R),_sig
+-addRi _L |> __int32(_) _R,_sig -> _RP,_sigP     --- add(_L, _R),_sig -> add(_L, _RP),_sigP
+-addRi _L |> __real64(_) _R,_sig -> _RP,_sigP    --- add(_L, _R),_sig -> add(_L, _RP),_sigP
+-addL _L,_sig -> _LP,_sigP                       --- add(_L, _R),_sig -> add(_LP, _R),_sigP
+
+-mulI _L |> __int32(_) _R |> __int32(_)          --- mul(_L, _R),_sig -> __mul(_L, _R),_sig
+-mulD _L |> __real64(_) _R |> __real64(_)        --- mul(_L, _R),_sig -> __mul(_L, _R),_sig
+-mulRi _L |> __int32(_) _R,_sig -> _RP,_sigP     --- mul(_L, _R),_sig -> mul(_L, _RP),_sigP
+-mulRi _L |> __real64(_) _R,_sig -> _RP,_sigP    --- mul(_L, _R),_sig -> mul(_L, _RP),_sigP
+-mulL _L,_sig -> _LP,_sigP                       --- mul(_L, _R),_sig -> mul(_LP, _R),_sigP
+
+
+-divI _L |> __int32(_) _R |> __int32(_)          --- div(_L, _R),_sig -> __div(_L, _R),_sig
+-divD _L |> __real64(_) _R |> __real64(_)        --- div(_L, _R),_sig -> __div(_L, _R),_sig
+-divRi _L |> __int32(_) _R,_sig -> _RP,_sigP     --- div(_L, _R),_sig -> div(_L, _RP),_sigP
+-divRi _L |> __real64(_) _R,_sig -> _RP,_sigP    --- div(_L, _R),_sig -> div(_L, _RP),_sigP
+-divL _L,_sig -> _LP,_sigP                       --- div(_L, _R),_sig -> div(_LP, _R),_sigP
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 -plugin --- plugin(_O),_sig -> __plugin(_O),_sig
 -plugin --- plugin(_O, _X),_sig -> __plugin(_O, _X),_sig
@@ -68,13 +94,23 @@ __bool ::= &BOOL
 __string::= &STRING_SQ
 
 
-// !try assign(a, 10), __map
-// !try assign(b, 5.0), __map
-// !try assign(c, true),__map
-!try sub(10, 5),__map
-!try sub(15.0, sub(10.0, 5.0)),__map
+!try assign(a, 10), __map = __done, {a=10}
+!try assign(b, 5.0), __map = __done, {b=5.0}
+!try assign(c, true),__map = __done, {c=true}
+!try sub(10, 5),__map = 5, {=}
+!try sub(15.0, sub(10.0, 5.0)),__map = 10.0, {=}
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
+!try add(10, 5),__map = 15, {=}
+!try add(15.0, add(10.0, 5.0)),__map = 30.0, {=}
+
+!try mul(10, 5),__map = 50, {=}
+!try mul(15.0, mul(10.0, 5.0)),__map = 750.0, {=}
+
+!try div(10, 5),__map = 2, {=}
+!try div(15, 2),__map = 7, {=} // float answer
+!try div(15.0, div(10.0, 5.0)),__map = 7.5, {=}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 (* GCD examples *)
 //!try seq(assign(a,6), seq(assign(b,9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a))))))), __map
