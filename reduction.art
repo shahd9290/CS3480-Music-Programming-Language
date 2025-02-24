@@ -112,7 +112,7 @@ operand ::= __real64^^ | __int32^^ | __bool^^ | deref^^ | __string^^ | plugin^^
 deref   ::= &ID
 __int32 ::= &INTEGER
 __real64 ::= &REAL
-__bool ::= &BOOL
+__bool ::= 'true' | 'false'
 __string::= &STRING_SQ
 
 
