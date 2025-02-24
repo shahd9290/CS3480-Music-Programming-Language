@@ -3,38 +3,39 @@
 !configuration -> _sig:__map
 
 (* Term rewrite rules *)
--assignI _n |> __int32(_)               --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
--assignD _n |> __real64(_)              --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
--assignB _n |> __bool(_)                --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
--assignR _E,_sig -> _I,_sigP            --- assign(_X,_E),_sig -> assign(_X,_I),_sigP
+-assignI _n |> __int32(_)                        --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignD _n |> __real64(_)                       --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignB _n |> __bool(_)                         --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignR _E,_sig -> _I,_sigP                     --- assign(_X,_E),_sig -> assign(_X,_I),_sigP
 
 -deref --- deref(_R),_sig -> __get(_sig,_R),_sig
 
--sequenceDone                    --- seq(__done, _C),_sig -> _C,_sig
--sequence _C1,_sig -> _C1P,_sigP --- seq(_C1,_C2),_sig -> seq(_C1P,_C2),_sigP
+-sequenceDone                                    --- seq(__done, _C),_sig -> _C,_sig
+-sequence _C1,_sig -> _C1P,_sigP                 --- seq(_C1,_C2),_sig -> seq(_C1P,_C2),_sigP
 
--ifTrue                        --- if(true,_C1,_C2),_sig -> _C1,_sig
--ifFalse                       --- if(false,_C1,_C2),_sig -> _C2,_sig
--ifResolve _E,_sig ->_EP,_sigP --- if(_E,_C1,_C2),_sig -> if(_EP,_C1,_C2),_sigP
+-ifTrue                                          --- if(true,_C1,_C2),_sig -> _C1,_sig
+-ifFalse                                         --- if(false,_C1,_C2),_sig -> _C2,_sig
+-ifResolve _E,_sig ->_EP,_sigP                   --- if(_E,_C1,_C2),_sig -> if(_EP,_C1,_C2),_sigP
 
 -while --- while(_E,_C),_sig -> if(_E,seq(_C,while(_E,_C)),__done),_sig
 
--gtI  _n1 |> __int32(_)  _n2 |> __int32(_)     --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
+-gtI  _n1 |> __int32(_)  _n2 |> __int32(_)       --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
 -gtD  _n1 |> __real64(_)  _n2 |> __real64(_)     --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
--gtR _n |> __int32(_)  _E2,_sig -> _I2,_sigP  --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
--gtR _n |> __real64(_)  _E2,_sig -> _I2,_sigP  --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
--gtL _E1,_sig -> _I1,_sigP                    --- gt(_E1,_E2),_sig  -> gt(_I1,_E2),_sigP
+-gtRi _n |> __int32(_)  _E2,_sig -> _I2,_sigP    --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
+-gtRd _n |> __real64(_)  _E2,_sig -> _I2,_sigP   --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
+-gtL _E1,_sig -> _I1,_sigP                       --- gt(_E1,_E2),_sig  -> gt(_I1,_E2),_sigP
 
--neI  _n1 |> __int32(_) _n2 |> __int32(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
+-neI  _n1 |> __int32(_) _n2 |> __int32(_)        --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
 -neD  _n1 |> __real64(_) _n2 |> __real64(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
--neR _n |> __int32(_)  _E2,_sig -> _I2,_sigP  --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
--neR _n |> __real64(_)  _E2,_sig -> _I2,_sigP  --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
--neL _E1,_sig -> _I1,_sigP                    --- ne(_E1,_E2),_sig  -> ne(_I1,_E2),_sigP
+-neRi _n |> __int32(_)  _E2,_sig -> _I2,_sigP    --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
+-neRd _n |> __real64(_)  _E2,_sig -> _I2,_sigP   --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
+-neL _E1,_sig -> _I1,_sigP                       --- ne(_E1,_E2),_sig  -> ne(_I1,_E2),_sigP
 
--subI  _n1 |> __int32(_) _n2 |> __int32(_)     --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
--subD  _n1 |> __real64(_) _n2 |> __real64(_)   --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
--subR _n |> __int32(_) _E2,_sig -> _I2,_sigP  --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
--subL _E1,_sig -> _I1,_sigP                   --- sub(_E1,_E2),_sig -> sub(_I1,_E2),_sigP
+-subI  _n1 |> __int32(_) _n2 |> __int32(_)       --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
+-subD  _n1 |> __real64(_) _n2 |> __real64(_)     --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
+-subRi _n |> __int32(_) _E2,_sig -> _I2,_sigP    --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
+-subRd _n |> __real64(_) _E2,_sig -> _I2,_sigP   --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
+-subL _E1,_sig -> _I1,_sigP                      --- sub(_E1,_E2),_sig -> sub(_I1,_E2),_sigP
 
 -plugin --- plugin(_O),_sig -> __plugin(_O),_sig
 -plugin --- plugin(_O, _X),_sig -> __plugin(_O, _X),_sig
@@ -71,7 +72,7 @@ __string::= &STRING_SQ
 // !try assign(b, 5.0), __map
 // !try assign(c, true),__map
 !try sub(10, 5),__map
-!try sub(10.0, 5.0),__map
+!try sub(15.0, sub(10.0, 5.0)),__map
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
