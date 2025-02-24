@@ -19,15 +19,20 @@
 
 -while --- while(_E,_C),_sig -> if(_E,seq(_C,while(_E,_C)),__done),_sig
 
--gt  _n1 |> __int32(_)  _n2 |> __int32(_)     --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
+-gtI  _n1 |> __int32(_)  _n2 |> __int32(_)     --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
+-gtD  _n1 |> __real64(_)  _n2 |> __real64(_)     --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
 -gtR _n |> __int32(_)  _E2,_sig -> _I2,_sigP  --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
+-gtR _n |> __real64(_)  _E2,_sig -> _I2,_sigP  --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
 -gtL _E1,_sig -> _I1,_sigP                    --- gt(_E1,_E2),_sig  -> gt(_I1,_E2),_sigP
 
--ne  _n1 |> __int32(_) _n2 |> __int32(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
+-neI  _n1 |> __int32(_) _n2 |> __int32(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
+-neD  _n1 |> __real64(_) _n2 |> __real64(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
 -neR _n |> __int32(_)  _E2,_sig -> _I2,_sigP  --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
+-neR _n |> __real64(_)  _E2,_sig -> _I2,_sigP  --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
 -neL _E1,_sig -> _I1,_sigP                    --- ne(_E1,_E2),_sig  -> ne(_I1,_E2),_sigP
 
--sub  _n1 |> __int32(_) _n2 |> __int32(_)     --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
+-subI  _n1 |> __int32(_) _n2 |> __int32(_)     --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
+-subD  _n1 |> __real64(_) _n2 |> __real64(_)   --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
 -subR _n |> __int32(_) _E2,_sig -> _I2,_sigP  --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
 -subL _E1,_sig -> _I1,_sigP                   --- sub(_E1,_E2),_sig -> sub(_I1,_E2),_sigP
 
@@ -61,12 +66,19 @@ __real64 ::= &REAL
 __bool ::= &BOOL
 __string::= &STRING_SQ
 
+
+// !try assign(a, 10), __map
+// !try assign(b, 5.0), __map
+// !try assign(c, true),__map
+!try sub(10, 5),__map
+!try sub(10.0, 5.0),__map
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 (* GCD examples *)
 //!try seq(assign(a,6), seq(assign(b,9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a))))))), __map
 //!try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a;"
-!try assign(a, 10), __map
-!try assign(b, 5.0), __map
-!try assign(c, true),__map
+
 
 (* Plugin test *)
 //!try "plugin('init');"
