@@ -20,42 +20,64 @@
 -while --- while(_E,_C),_sig -> if(_E,seq(_C,while(_E,_C)),__done),_sig
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-neI  _n1 |> __int32(_) _n2  |> __int32(_)       --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
+-neD  _n1 |> __real64(_) _n2 |> __real64(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
+-neRi _n  |> __int32(_)  _E2,_sig -> _I2,_sigP   --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
+-neRd _n  |> __real64(_)  _E2,_sig -> _I2,_sigP  --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
+-neL _E1,_sig -> _I1,_sigP                       --- ne(_E1,_E2),_sig  -> ne(_I1,_E2),_sigP
+
+-eqI _L  |> __int32(_) _R |> __int32(_)          --- eq(_L, _R),_sig -> __eq(_L, _R),_sig // ==
+-eqD _L  |> __real64(_) _R |> __real64(_)        --- eq(_L, _R),_sig -> __eq(_L, _R),_sig // ==
+-eqRi _L |> __int32(_) _R,_sig -> _RP,_sigP      --- eq(_L, _R),_sig -> eq(_L, _RP),_sigP
+-eqRd _L |> __real64(_) _R,_sig -> _RP,_sigP     --- eq(_L, _R),_sig -> eq(_L, _RP),_sigP
+-eqL _L,_sig -> _LP,_sigP                        --- eq(_L, _R),_sig -> eq(_LP, _R),_sigP 
 
 -gtI  _n1 |> __int32(_)  _n2 |> __int32(_)       --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
 -gtD  _n1 |> __real64(_)  _n2 |> __real64(_)     --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
--gtRi _n |> __int32(_)  _E2,_sig -> _I2,_sigP    --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
--gtRd _n |> __real64(_)  _E2,_sig -> _I2,_sigP   --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
+-gtRi _n  |> __int32(_)  _E2,_sig -> _I2,_sigP   --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
+-gtRd _n  |> __real64(_)  _E2,_sig -> _I2,_sigP  --- gt(_n,_E2),_sig   -> gt(_n,_I2),_sigP
 -gtL _E1,_sig -> _I1,_sigP                       --- gt(_E1,_E2),_sig  -> gt(_I1,_E2),_sigP
 
+-ltI _L  |> __int32(_) _R |> __int32(_)          --- lt(_L, _R),_sig  -> __lt(_L, _R),_sig  // <
+-ltD _L  |> __real64(_) _R |> __real64(_)        --- lt(_L, _R),_sig  -> __lt(_L, _R),_sig  // <
+-ltRi _L |> __int32(_) _R,_sig  -> _RP,_sigP     --- lt(_L, _R),_sig  -> lt(_L, _RP),_sigP 
+-ltRd _L |> __real64(_) _R,_sig  -> _RP,_sigP    --- lt(_L, _R),_sig  -> lt(_L, _RP),_sigP 
+-ltL _L,_sig  -> _LP,_sigP                       --- lt(_L, _R),_sig  -> lt(_LP, _R),_sigP  
+
+-geI _L  |> __int32(_) _R |> __int32(_)          --- ge(_L, _R),_sig  -> __ge(_L, _R),_sig  // >=
+-geD _L  |> __real64(_) _R |> __real64(_)        --- ge(_L, _R),_sig  -> __ge(_L, _R),_sig  // >=
+-geRi _L |> __int32(_) _R,_sig  -> _RP,_sigP     --- ge(_L, _R),_sig  -> ge(_L, _RP),_sigP 
+-geRd _L |> __real64(_) _R,_sig  -> _RP,_sigP    --- ge(_L, _R),_sig  -> ge(_L, _RP),_sigP 
+-geL _L,_sig  -> _LP,_sigP                       --- ge(_L, _R),_sig  -> ge(_LP, _R),_sigP  
+
+-leI _L  |> __int32(_) _R |> __int32(_)          --- le(_L, _R),_sig  -> __le(_L, _R),_sig  // <=
+-leD _L  |> __real64(_) _R |> __real64(_)        --- le(_L, _R),_sig  -> __le(_L, _R),_sig  // <=
+-leRi _L |> __int32(_) _R,_sig  -> _RP,_sigP     --- le(_L, _R),_sig  -> le(_L, _RP),_sigP 
+-leRd _L |> __real64(_) _R,_sig  -> _RP,_sigP    --- le(_L, _R),_sig  -> le(_L, _RP),_sigP 
+-leL _L,_sig  -> _LP,_sigP                       --- le(_L, _R),_sig  -> le(_LP, _R),_sigP 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
--neI  _n1 |> __int32(_) _n2 |> __int32(_)        --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
--neD  _n1 |> __real64(_) _n2 |> __real64(_)      --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig
--neRi _n |> __int32(_)  _E2,_sig -> _I2,_sigP    --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
--neRd _n |> __real64(_)  _E2,_sig -> _I2,_sigP   --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
--neL _E1,_sig -> _I1,_sigP                       --- ne(_E1,_E2),_sig  -> ne(_I1,_E2),_sigP
-
--subI  _n1 |> __int32(_) _n2 |> __int32(_)       --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
+-subI  _n1 |> __int32(_) _n2  |> __int32(_)      --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
 -subD  _n1 |> __real64(_) _n2 |> __real64(_)     --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig
--subRi _n |> __int32(_) _E2,_sig -> _I2,_sigP    --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
--subRd _n |> __real64(_) _E2,_sig -> _I2,_sigP   --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
+-subRi _n  |> __int32(_) _E2,_sig -> _I2,_sigP   --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
+-subRd _n  |> __real64(_) _E2,_sig -> _I2,_sigP  --- sub(_n,_E2),_sig  -> sub(_n,_I2),_sigP
 -subL _E1,_sig -> _I1,_sigP                      --- sub(_E1,_E2),_sig -> sub(_I1,_E2),_sigP
 
--addI _L |> __int32(_) _R |> __int32(_)          --- add(_L, _R),_sig -> __add(_L, _R),_sig
--addD _L |> __real64(_) _R |> __real64(_)        --- add(_L, _R),_sig -> __add(_L, _R),_sig
+-addI _L  |> __int32(_) _R  |> __int32(_)        --- add(_L, _R),_sig -> __add(_L, _R),_sig
+-addD _L  |> __real64(_) _R |> __real64(_)       --- add(_L, _R),_sig -> __add(_L, _R),_sig
 -addRi _L |> __int32(_) _R,_sig -> _RP,_sigP     --- add(_L, _R),_sig -> add(_L, _RP),_sigP
 -addRi _L |> __real64(_) _R,_sig -> _RP,_sigP    --- add(_L, _R),_sig -> add(_L, _RP),_sigP
 -addL _L,_sig -> _LP,_sigP                       --- add(_L, _R),_sig -> add(_LP, _R),_sigP
 
--mulI _L |> __int32(_) _R |> __int32(_)          --- mul(_L, _R),_sig -> __mul(_L, _R),_sig
--mulD _L |> __real64(_) _R |> __real64(_)        --- mul(_L, _R),_sig -> __mul(_L, _R),_sig
+-mulI _L  |> __int32(_) _R  |> __int32(_)        --- mul(_L, _R),_sig -> __mul(_L, _R),_sig
+-mulD _L  |> __real64(_) _R |> __real64(_)       --- mul(_L, _R),_sig -> __mul(_L, _R),_sig
 -mulRi _L |> __int32(_) _R,_sig -> _RP,_sigP     --- mul(_L, _R),_sig -> mul(_L, _RP),_sigP
 -mulRi _L |> __real64(_) _R,_sig -> _RP,_sigP    --- mul(_L, _R),_sig -> mul(_L, _RP),_sigP
 -mulL _L,_sig -> _LP,_sigP                       --- mul(_L, _R),_sig -> mul(_LP, _R),_sigP
 
 
--divI _L |> __int32(_) _R |> __int32(_)          --- div(_L, _R),_sig -> __div(_L, _R),_sig
--divD _L |> __real64(_) _R |> __real64(_)        --- div(_L, _R),_sig -> __div(_L, _R),_sig
+-divI _L  |> __int32(_) _R  |> __int32(_)        --- div(_L, _R),_sig -> __div(_L, _R),_sig
+-divD _L  |> __real64(_) _R |> __real64(_)       --- div(_L, _R),_sig -> __div(_L, _R),_sig
 -divRi _L |> __int32(_) _R,_sig -> _RP,_sigP     --- div(_L, _R),_sig -> div(_L, _RP),_sigP
 -divRi _L |> __real64(_) _R,_sig -> _RP,_sigP    --- div(_L, _R),_sig -> div(_L, _RP),_sigP
 -divL _L,_sig -> _LP,_sigP                       --- div(_L, _R),_sig -> div(_LP, _R),_sigP
