@@ -1,0 +1,18 @@
+!configuration -> _sig:__map
+
+
+-assignI _n |> __int32(_)                        --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignR _E,_sig -> _I,_sigP                     --- assign(_X,_E),_sig -> assign(_X,_I),_sigP
+
+-deref --- deref(_R),_sig -> __get(_sig,_R),_sig
+
+-sequenceDone                                    --- seq(__done, _C),_sig -> _C,_sig
+-sequence _C1,_sig -> _C1P,_sigP                 --- seq(_C1,_C2),_sig -> seq(_C1P,_C2),_sigP
+
+-addI _L  |> __int32(_) _R  |> __int32(_)        --- add(_L, _R),_sig -> __add(_L, _R),_sig
+
+-preinc                                          --- preinc(_n), _sig -> assign(_n, add(deref(_n), 1)), _sig
+-postinc _n, _sig -> _nP, _sigP                  --- postinc(_n), _sig -> seq(deref(_n), preinc(_nP)),_sigP
+
+!trace 3
+!try seq(assign(x, 5), postinc(x)),__map = 5, {x=6}
