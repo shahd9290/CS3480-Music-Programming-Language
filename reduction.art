@@ -110,7 +110,7 @@
 
 (*  CFG rules *)
 seq ::= statement^^ | statement seq 
-statement ::= assign^^ | while^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^
+statement ::= assign^^ | while^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^ | preinc^^ ';'^ | predec^^ ';'^
 assign ::= &ID ':='^ expression ';'^
 while ::= 'while'^ expression 'do'^ statement
 if ::= 'if'^ expression 'then'^ statement | 'if'^ expression 'then'^ statement 'else'^ statement
@@ -133,6 +133,8 @@ adds  ::= operand^^ | sub^^ | add^^ | mul^^ | div^^
   div ::= adds '/'^ operand
 operand ::= __real64^^ | __int32^^ | __bool^^ | deref^^ | __string^^ | plugin^^
 deref   ::= &ID
+preinc ::= '++'^ &ID
+predec ::= '--'^ &ID
 __int32 ::= &INTEGER
 __real64 ::= &REAL
 __bool ::= 'true' | 'false'
@@ -195,8 +197,10 @@ __string::= &STRING_SQ
 // !try seq(assign(a, 6), dec(deref(a))), __map = 5, {a=6}
 
 //!try "x := 5; x := x + 1;" = __done, {x=6}
-!try seq(assign(x, 5), preinc(x)), __map = __done, {x=6}
-!try seq(assign(x, 5), predec(x)), __map = __done, {x=4}
+// !try seq(assign(x, 5), preinc(x)), __map = __done, {x=6}
+// !try seq(assign(x, 5), predec(x)), __map = __done, {x=4}
+!try "x := 5; ++x;" = __done, {x=6}
+!try "x := 5; --x;" = __done, {x=4}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
