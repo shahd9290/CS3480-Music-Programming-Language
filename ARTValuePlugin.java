@@ -32,7 +32,7 @@ public class ARTValuePlugin extends AbstractValuePlugin {
         playChord((String) args[i], Chord.MINOR7);
       break;
 
-    case "beep":
+    case "ding":
       play("D");
       break;
 
