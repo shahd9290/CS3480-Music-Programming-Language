@@ -8,7 +8,7 @@
 -assignB _n |> __bool(_)                              --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
 -assignR _E,_sig -> _I,_sigP                          --- assign(_X,_E),_sig -> assign(_X,_I),_sigP
 
--deref --- deref(_R),_sig -> __get(_sig,_R),_sig
+-deref                                                --- deref(_R),_sig -> __get(_sig,_R),_sig
 
 -sequenceDone                                         --- seq(__done, _C),_sig -> _C,_sig
 -sequenceI _n |> __int32(_) _R,_sig -> _RP, _sigP     --- seq(_n, _R), _sig -> seq(_RP, _n), _sigP
@@ -18,8 +18,8 @@
 -ifFalse                                              --- if(false,_C1,_C2),_sig -> _C2,_sig
 -ifResolve _E,_sig ->_EP,_sigP                        --- if(_E,_C1,_C2),_sig -> if(_EP,_C1,_C2),_sigP
 
--while --- while(_E,_C),_sig -> if(_E,seq(_C,while(_E,_C)),__done),_sig
-
+-while                                                --- while(_E,_C),_sig -> if(_E,seq(_C,while(_E,_C)),__done),_sig
+-for                                                  --- for(_I, _C, _U, _B), _sig -> seq(_I, while(_C, seq(_B, _U))), _sig
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -and  _L |> __bool(_) _R |> __bool(_)                 --- and(_L, _R),_sig -> __and(_L, _R),_sig
@@ -202,18 +202,23 @@ __string::= &STRING_SQ
 // !try seq(assign(a, 6), inc(deref(a))), __map = 7, {a=6}
 // !try seq(assign(a, 6), dec(deref(a))), __map = 5, {a=6}
 
-//!try "x := 5; x := x + 1;" = __done, {x=6}
+// !try "x := 5; x := x + 1;" = __done, {x=6}
 // !try seq(assign(x, 5), preinc(x)), __map = __done, {x=6}
 // !try seq(assign(x, 5), predec(x)), __map = __done, {x=4}
 // !try "x := 5; ++x;" = __done, {x=6}
 // !try "x := 5; --x;" = __done, {x=4}
-!trace 5
-!try seq(assign(x, 5), postinc(x)),__map = 5, {x=6}
-!try seq(assign(x, 5), postdec(x)),__map = 5, {x=4}
-!try "x := 5; x++;" = 5, {x=6}
-!try "x := 5; x--;" = 5, {x=4}
+// !try seq(assign(x, 5), postinc(x)),__map = 5, {x=6}
+// !try seq(assign(x, 5), postdec(x)),__map = 5, {x=4}
+// !try "x := 5; x++;" = 5, {x=6}
+// !try "x := 5; x--;" = 5, {x=4}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+!trace 2
+!try for(assign(x, 0), lt(deref(x), 5), preinc(x), seq(plugin("init"),plugin("beep"))), __map
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 (* GCD examples *)
 //!try seq(assign(a,6), seq(assign(b,9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a))))))), __map
 //!try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a;"

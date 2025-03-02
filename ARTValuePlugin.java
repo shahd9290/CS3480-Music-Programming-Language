@@ -32,6 +32,10 @@ public class ARTValuePlugin extends AbstractValuePlugin {
         playChord((String) args[i], Chord.MINOR7);
       break;
 
+    case "beep":
+      play("D");
+      break;
+
     default:
       Util.fatal("Unknown plugin operation: " + args[0]);
     }
