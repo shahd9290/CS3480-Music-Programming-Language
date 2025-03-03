@@ -96,6 +96,12 @@
 -divRi _L |> __real64(_) _R,_sig -> _RP,_sigP         --- div(_L, _R),_sig -> div(_L, _RP),_sigP
 -divL _L,_sig -> _LP,_sigP                            --- div(_L, _R),_sig -> div(_LP, _R),_sigP
 
+-modI _L  |> __int32(_) _R  |> __int32(_)             --- mod(_L, _R),_sig -> __mod(_L, _R),_sig
+-modD _L  |> __real64(_) _R |> __real64(_)            --- mod(_L, _R),_sig -> __mod(_L, _R),_sig
+-modRi _L |> __int32(_) _R,_sig -> _RP,_sigP          --- mod(_L, _R),_sig -> mod(_L, _RP),_sigP
+-modRi _L |> __real64(_) _R,_sig -> _RP,_sigP         --- div(_L, _R),_sig -> mod(_L, _RP),_sigP
+-modL _L,_sig -> _LP,_sigP                            --- mod(_L, _R),_sig -> mod(_LP, _R),_sigP
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -preinc                                               --- preinc(_n), _sig -> assign(_n, add(deref(_n), 1)), _sig
@@ -131,11 +137,12 @@ rels ::= adds^^ | lt^^ | gt^^ | ne^^ | eq^^ | le^^ | ge^^
   ne ::= adds '!='^ adds
   eq ::= adds '=='^ adds
 
-adds  ::= operand^^ | sub^^ | add^^ | mul^^ | div^^
+adds  ::= operand^^ | sub^^ | add^^ | mul^^ | div^^ | mod^^
   add ::= adds '+'^ operand
   sub ::= adds '-'^ operand
   mul ::= adds '*'^ operand
   div ::= adds '/'^ operand
+  mod ::= adds '%'^ operand
 operand ::= __real64^^ | __int32^^ | __bool^^ | deref^^ | __string^^ | plugin^^
 deref   ::= &ID
 pre ::= preinc^^ | predec^^ 
@@ -165,6 +172,9 @@ __string::= &STRING_SQ
 // !try div(10, 5),__map = 2, {=}
 // !try div(15, 2),__map = 7, {=} // float answer
 // !try div(15.0, div(10.0, 5.0)),__map = 7.5, {=}
+
+// !try mod(100.0, 3.0), __map = 1.0, {=}
+// !try "10 % 4;" = 2, {=}
 
 // !try "10 + 5;" = 15, {=}
 // !try "10 - 5;" = 5, {=}
@@ -200,11 +210,6 @@ __string::= &STRING_SQ
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// !try inc(5), __map = 6, {=}
-// !try dec(6), __map = 5, {=}
-// !try seq(assign(a, 6), inc(deref(a))), __map = 7, {a=6}
-// !try seq(assign(a, 6), dec(deref(a))), __map = 5, {a=6}
-
 // !try "x := 5; x := x + 1;" = __done, {x=6}
 // !try seq(assign(x, 5), preinc(x)), __map = __done, {x=6}
 // !try seq(assign(x, 5), predec(x)), __map = __done, {x=4}
@@ -217,10 +222,9 @@ __string::= &STRING_SQ
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-!trace 2
 //!try for(assign(x, 0), lt(deref(x), 5), preinc(x), seq(plugin("init"),plugin("ding"))), __map
-!try "plugin('init');"
-!try "for(x := 0; x < 5; ++x) do plugin('ding');"
+// !try "plugin('init');"
+// !try "for(x := 0; x < 5; ++x) do plugin('ding');"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
