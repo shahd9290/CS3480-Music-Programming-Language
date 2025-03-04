@@ -111,12 +111,12 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
--plugin --- plugin(_O),_sig -> __plugin(_O),_sig
--plugin --- plugin(_O, _X),_sig -> __plugin(_O, _X),_sig
--plugin --- plugin(_O, _X, _Y),_sig -> __plugin(_O, _X, _Y),_sig
--plugin --- plugin(_O, _X, _Y, _Z),_sig -> __plugin(_O, _X, _Y, _Z),_sig
+-plugin                                               --- plugin(_O),_sig -> __plugin(_O),_sig
+-plugin                                               --- plugin(_O, _X),_sig -> __plugin(_O, _X),_sig
+-plugin                                               --- plugin(_O, _X, _Y),_sig -> __plugin(_O, _X, _Y),_sig
+-plugin                                               --- plugin(_O, _X, _Y, _Z),_sig -> __plugin(_O, _X, _Y, _Z),_sig
 
--play   --- play(_A, _B, _C),_sig -> __plugin("play", _A, _B, _C),_sig
+-play                                                 --- play(_A, _B, _C),_sig -> __plugin("play", _A, _B, _C),_sig
 
 (*  CFG rules *)
 seq ::= statement^^ | statement seq 
