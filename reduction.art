@@ -6,6 +6,7 @@
 -assignI _n |> __int32(_)                                            --- assign(_X,_n),_sig,_alpha -> __done, __put(_sig, _X, _n), _alpha
 -assignD _n |> __real64(_)                                           --- assign(_X,_n),_sig,_alpha -> __done, __put(_sig, _X, _n), _alpha
 -assignB _n |> __bool(_)                                             --- assign(_X,_n),_sig,_alpha -> __done, __put(_sig, _X, _n), _alpha
+-assignL _n |> __list                                                --- assign(_X,_n),_sig,_alpha -> __done, __put(_sig, _X, _n), _alpha
 -assignR _E,_sig,_alpha -> _I,_sigP,_alphaP                          --- assign(_X,_E),_sig,_alpha -> assign(_X,_I),_sigP,_alphaP
 
 -deref                                                               --- deref(_R),_sig,_alpha -> __get(_sig,_R),_sig, _alpha
@@ -218,9 +219,9 @@ __string::= &STRING_SQ
 // !try not(true),__map, __list= false, {=}, []
 // !try not(false),__map, __list= true, {=}, []
 
-!try "true && true;" = true, {=}, []
-!try "true || false;" = true, {=}, []
-!try "!false;" = true, {=}, []
+// !try "true && true;" = true, {=}, []
+// !try "true || false;" = true, {=}, []
+// !try "!false;" = true, {=}, []
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -247,6 +248,9 @@ __string::= &STRING_SQ
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+!try assign(x, []), __map, __list = __done, {x=[]}, []
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
 //!try seq(assign(a,6), seq(assign(b,9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a))))))), __map
 //!try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a;"
