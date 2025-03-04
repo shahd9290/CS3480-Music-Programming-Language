@@ -17,11 +17,7 @@
 -ifTrue                                                              --- if(true,_C1,_C2),_sig,_alpha -> _C1,_sig, _alpha
 -ifFalse                                                             --- if(false,_C1,_C2),_sig,_alpha -> _C2,_sig, _alpha
 -ifResolve _E,_sig,_alpha ->_EP,_sigP,_alphaP                        --- if(_E,_C1,_C2),_sig,_alpha -> if(_EP,_C1,_C2),_sigP,_alphaP
--ifElifTrueFalse                                                     --- if (true, _C1, _E2, _C2, _C3),_sig,_alpha -> _C1, _sig, _alpha
--ifElifFalseTrue                                                     --- if (false, _C1, true, _C2, _C3),_sig,_alpha -> _C2, _sig, _alpha
--ifElifFalseFalse                                                    --- if (false, _C1, false, _C2, _C3),_sig,_alpha -> _C3, _sig, _alpha
--ifElifL _E1,_sig,_alpha ->_EP1,_sigP,_alphaP                        --- if (_E1, _C1, _E2, _C2, _C3),_sig,_alpha ->if (_E1P, _C1, _E2, _C2, _C3),_sigP,_alphaP
--ifElifR _E2,_sig,_alpha ->_EP2,_sigP,_alphaP                        --- if (_E1, _C1, _E2, _C2, _C3),_sig,_alpha ->if (_E1, _C1, _E2P, _C2, _C3),_sigP,_alphaP
+-ifElif                                                              --- if(_E1, _C1, _E2, _C2, _C3),_sig,_alpha -> if(_E1, _C1, if(_E2, _C2, _C3)),_sig, _alpha
 
 -while                                                               --- while(_E,_C),_sig,_alpha -> if(_E,seq(_C,while(_E,_C)),__done),_sig, _alpha
 -for                                                                 --- for(_I, _C, _U, _B), _sig,_alpha -> seq(_I, while(_C, seq(_B, _U))), _sig, _alpha
