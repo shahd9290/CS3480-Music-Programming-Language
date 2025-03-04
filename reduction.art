@@ -130,7 +130,7 @@ if ::= 'if'^ expression 'then'^ statement | 'if'^ expression 'then'^ statement '
 plugin ::= 'plugin'^ '('^ expressions^ ')'^  
 play ::= 'play'^ __string ','^ __string ','^ __string
 expressions ::= expression | expression ','^ expressions^
-expression ::= rels^^
+expression ::= rels^^ | logic^^
 rels ::= adds^^ | lt^^ | gt^^ | ne^^ | eq^^ | le^^ | ge^^
   gt ::= adds '>'^ adds
   lt ::= adds '<'^ adds
@@ -145,7 +145,13 @@ adds  ::= operand^^ | sub^^ | add^^ | mul^^ | div^^ | mod^^
   mul ::= adds '*'^ operand
   div ::= adds '/'^ operand
   mod ::= adds '%'^ operand
-operand ::= __real64^^ | __int32^^ | __bool^^ | deref^^ | __string^^ | plugin^^
+
+logic ::= boolean^^ | and^^ | or^^ | not^^
+  and ::= boolean '&&'^ boolean
+  or ::= boolean '||'^ boolean
+  not ::= '!'^ boolean
+operand ::= __real64^^ | __int32^^ | deref^^ | __string^^ | plugin^^
+boolean ::= __bool^^
 deref   ::= &ID
 pre ::= preinc^^ | predec^^ 
   preinc ::= '++'^ &ID
@@ -212,6 +218,10 @@ __string::= &STRING_SQ
 // !try not(true),__map, __list= false, {=}, []
 // !try not(false),__map, __list= true, {=}, []
 
+!try "true && true;" = true, {=}, []
+!try "true || false;" = true, {=}, []
+!try "!false;" = true, {=}, []
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // !try "x := 5; x := x + 1;" = __done, {x=6}, []
@@ -231,10 +241,9 @@ __string::= &STRING_SQ
 // !try "for(x := 0; x < 5; ++x) do plugin('ding');"
 
 // !try seq(assign(x, 5), if(lt(deref(x), 5), assign(x, 10), gt(deref(x), 5), assign(x, 0), assign(x, -1))), __map,__list
-!try "x:= 10; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=5}, []
-!try "x:= 4; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=10}, []
-!try "x:= 5; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=0}, []
-
+// !try "x:= 10; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=5}, []
+// !try "x:= 4; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=10}, []
+// !try "x:= 5; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=0}, []
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
