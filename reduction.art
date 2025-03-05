@@ -159,10 +159,10 @@
 
 (*  CFG rules *)
 seq ::= statement^^ | statement seq 
-statement ::= assign^^ | while^^ | for^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^ | pre^^ ';'^ | post^^ ';'^
+statement ::= assign^^ | while^^ | for^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^ | prepost^^ ';'^
 assign ::= &ID ':='^ expression ';'^
 while ::= 'while'^ expression 'do'^ statement
-for ::= 'for'^ '('^ assign expression ';'^ pre ')'^ 'do'^ statement
+for ::= 'for'^ '('^ assign expression ';'^ prepost ')'^ 'do'^ statement
 if ::= 'if'^ expression 'then'^ statement | 'if'^ expression 'then'^ statement 'else'^ statement | 'if'^ expression 'then'^ statement 'otherwise if'^ expression 'then'^ statement 'else'^ statement
 
 plugin ::= 'plugin'^ '('^ expressions^ ')'^  
@@ -191,10 +191,9 @@ logic ::= boolean^^ | and^^ | or^^ | not^^
 operand ::= __real64^^ | __int32^^ | deref^^ | __string^^ | plugin^^
 boolean ::= __bool^^
 deref   ::= &ID
-pre ::= preinc^^ | predec^^ 
+prepost ::= preinc^^ | predec^^ | postinc^^ | postdec^^ 
   preinc ::= '++'^ &ID
   predec ::= '--'^ &ID
-post ::= postinc^^ | postdec^^ 
   postinc ::= &ID '++'^
   postdec ::= &ID '--'^
 __int32 ::= &INTEGER
@@ -273,9 +272,9 @@ __string::= &STRING_SQ
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // !try for(assign(x, 0), lt(deref(x), 5), postinc(x), seq(plugin("init"),plugin("ding"))), __map
-!try seq(assign(i, 0), while(lt(deref(i), 5), seq(plugin("init"), seq(plugin("ding"), postinc(i))))),__map
+// !try seq(assign(i, 0), while(lt(deref(i), 5), seq(plugin("init"), seq(plugin("ding"), postinc(i))))),__map
 // !try "plugin('init');"
-// !try "for(x := 0; x < 5; ++x) do plugin('ding');"
+// !try "for(x := 0; x < 5; x++) do plugin('ding');"
 
 // !try seq(assign(x, 5), if(lt(deref(x), 5), assign(x, 10), gt(deref(x), 5), assign(x, 0), assign(x, -1))), __map
 // !try "x:= 10; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=5}
