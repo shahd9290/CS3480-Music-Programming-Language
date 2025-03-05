@@ -118,11 +118,28 @@
 -listlength _L |> __list(_)                           --- length(_L), _sig -> __card(_L) , _sig
 -listlength deref(_L), _sig -> _LI,_sigP              --- length(_L), _sig -> length(_LI) , _sigP
 
--listadd  deref(_L),_sig -> _LI,_sig                  --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+
+-listadd  deref(_L),_sig -> _LI,_sig
+          _V |> __int32(_)                            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listadd  deref(_L),_sig -> _LI,_sig
+          _V |> __real64(_)                            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listadd  deref(_L),_sig -> _LI,_sig
+          _V |> __string(_)                            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listadd  _V, _sig -> _VP, _sigP                      --- insert(_L, _I, _V),_sig -> insert(_L, _I, _VP), _sig
 -listadd  _I, _sig -> _IP, _sigP                      --- insert(_L, _I, _V),_sig -> insert(_L, _IP, _V), _sig
 
 -listappend deref(_L),_sig -> _LI,_sig 
-length(_LI),_sig -> _N,_sig                           --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
+            length(_LI),_sig -> _N,_sig
+            _N |> __int32(_)                          --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
+-listappend deref(_L),_sig -> _LI,_sig 
+            length(_LI),_sig -> _N,_sig
+            _N |> __real64(_)                          --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
+-listappend deref(_L),_sig -> _LI,_sig 
+            length(_LI),_sig -> _N,_sig
+            _N |> __string(_)                          --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
+-listappend   _V,_sig -> _VP, _sigP                   --- append(_L, _V),_sig -> append(_L, _VP),_sigP
+// get
+// remove
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -plugin                                               --- plugin(_O),_sig -> __plugin(_O),_sig 
 -plugin                                               --- plugin(_O, _X),_sig -> __plugin(_O, _X),_sig 
@@ -270,9 +287,12 @@ __string::= &STRING_SQ
 // !try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
 !trace 5
 // !try insert(x, 0, 1), {x=[]} = __done, {x=[1]}
-!try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
-!try seq(assign(x, [1]), append(x, 1)), __map = __done, {x=[1,1]}
+// !try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
+// !try seq(assign(x, [1]), append(x, 1)), __map = __done, {x=[1,1]}
 // !try seq(assign(x, []), insert(x, 0, 1)), __map = __done, {x=[1]}
+!try seq(assign(x, 5), seq(assign(l, []), append(l, deref(x)))),__map
+!try seq(assign(l, []), for(assign(x, 0), lt(deref(x), 5), preinc(x), append(l, deref(x)))),__map = __done, {l=[0,1,2,3,4], x=5}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
 //!try seq(assign(a,6), seq(assign(b,9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a))))))), __map
