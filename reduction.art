@@ -41,14 +41,18 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -neI  _n1 |> __int32(_) _n2  |> __int32(_)            --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig 
 -neD  _n1 |> __real64(_) _n2 |> __real64(_)           --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig 
+-neD  _n1 |> __string(_) _n2 |> __string(_)           --- ne(_n1,_n2),_sig  -> __ne(_n1,_n2),_sig 
 -neRi _n  |> __int32(_)  _E2,_sig -> _I2,_sigP        --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
 -neRd _n  |> __real64(_)  _E2,_sig -> _I2,_sigP       --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
+-neRd _n  |> __string(_)  _E2,_sig -> _I2,_sigP       --- ne(_n,_E2) ,_sig  -> ne(_n,_I2),_sigP
 -neL _E1,_sig -> _I1,_sigP                            --- ne(_E1,_E2),_sig  -> ne(_I1,_E2),_sigP
 
 -eqI _L  |> __int32(_) _R |> __int32(_)               --- eq(_L, _R),_sig -> __eq(_L, _R),_sig // ==
 -eqD _L  |> __real64(_) _R |> __real64(_)             --- eq(_L, _R),_sig -> __eq(_L, _R),_sig // ==
+-eqD _L  |> __string(_) _R |> __string(_)             --- eq(_L, _R),_sig -> __eq(_L, _R),_sig // ==
 -eqRi _L |> __int32(_) _R,_sig -> _RP,_sigP           --- eq(_L, _R),_sig -> eq(_L, _RP),_sigP
 -eqRd _L |> __real64(_) _R,_sig -> _RP,_sigP          --- eq(_L, _R),_sig -> eq(_L, _RP),_sigP
+-eqRd _L |> __string(_) _R,_sig -> _RP,_sigP          --- eq(_L, _R),_sig -> eq(_L, _RP),_sigP
 -eqL _L,_sig -> _LP,_sigP                             --- eq(_L, _R),_sig -> eq(_LP, _R),_sigP 
 
 -gtI  _n1 |> __int32(_)  _n2 |> __int32(_)            --- gt(_n1,_n2),_sig  ->  __gt(_n1,_n2),_sig 
