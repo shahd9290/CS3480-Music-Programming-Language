@@ -153,16 +153,13 @@
             length(_L),_sig -> _I                     --- append(_L, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAppDer deref(_L),_sig -> _LI,_sig 
             length(_LI),_sig -> _N,_sig
-            _N |> __int32(_)                          --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
-            
+            _N |> __int32(_)                          --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig   
 -listAppDer deref(_L),_sig -> _LI,_sig 
             length(_LI),_sig -> _N,_sig
             _N |> __real64(_)                         --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
-
 -listAppDer deref(_L),_sig -> _LI,_sig 
             length(_LI),_sig -> _N,_sig
             _N |> __string(_)                         --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
-
 -listAppR  _V,_sig -> _VP, _sigP                      --- append(_L, _V),_sig -> append(_L, _VP),_sigP
 
 // Get
