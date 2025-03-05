@@ -113,11 +113,11 @@
 -predec                                               --- predec(_n), _sig -> assign(_n, sub(deref(_n), 1)), _sig 
 -postinc deref(_n),_sig -> _N,_sig 
          _N |> __int32(_)
-         assign(_n, __add(_N, 1)),_sig -> _,_sigP      --- postinc(_n), _sig -> _N, _sigP 
+         assign(_n, __add(_N, 1)),_sig -> _,_sigP     --- postinc(_n), _sig -> _N, _sigP 
 
 -postdec deref(_n),_sig -> _N,_sig 
          _N |> __int32(_)
-         assign(_n, __sub(_N, 1)),_sig -> _,_sigP      --- postdec(_n), _sig -> _N, _sigP 
+         assign(_n, __sub(_N, 1)),_sig -> _,_sigP     --- postdec(_n), _sig -> _N, _sigP 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -listlength _L |> __list                              --- length(_L), _sig -> 0 , _sig
