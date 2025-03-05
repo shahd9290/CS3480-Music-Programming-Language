@@ -120,35 +120,58 @@
          assign(_n, __sub(_N, 1)),_sig -> _,_sigP     --- postdec(_n), _sig -> _N, _sigP 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
--listlength _L |> __list                              --- length(_L), _sig -> 0 , _sig
--listlength _L |> __list(_)                           --- length(_L), _sig -> __card(_L) , _sig
--listlength deref(_L), _sig -> _LI,_sigP              --- length(_L), _sig -> length(_LI) , _sigP
+// Length
+-listLenE   _L |> __list                              --- length(_L), _sig -> 0 , _sig
+-listLenV   _L |> __list(_)                           --- length(_L), _sig -> __card(_L) , _sig
+-listLenD   deref(_L), _sig -> _LI,_sigP              --- length(_L), _sig -> length(_LI) , _sigP
 
+// Insert
+-listAddEmp _L|>__list _V |> __int32(_)               --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __real64(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __string(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __int32(_)            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __real64(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __string(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listaddDer deref(_L),_sig -> _LI,_sig
+            _V |> __int32(_)                          --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listaddDer deref(_L),_sig -> _LI,_sig
+            _V |> __real64(_)                         --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listaddDer deref(_L),_sig -> _LI,_sig
+            _V |> __string(_)                         --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listaddRV  _V, _sig -> _VP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _I, _VP), _sig
+-listaddRI  _I, _sig -> _IP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _IP, _V), _sig
 
--listadd  deref(_L),_sig -> _LI,_sig
-          _V |> __int32(_)                            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listadd  deref(_L),_sig -> _LI,_sig
-          _V |> __real64(_)                           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listadd  deref(_L),_sig -> _LI,_sig
-          _V |> __string(_)                           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listadd  _V, _sig -> _VP, _sigP                      --- insert(_L, _I, _V),_sig -> insert(_L, _I, _VP), _sig
--listadd  _I, _sig -> _IP, _sigP                      --- insert(_L, _I, _V),_sig -> insert(_L, _IP, _V), _sig
-
--listappend deref(_L),_sig -> _LI,_sig 
+// Append
+-listAppEmp _L|>__list _V |> __int32(_)               --- append(_L, _V),_sig -> insert(_L, 0, _V),_sig
+-listAppEmp _L|>__list _V |> __real64(_)              --- append(_L, _V),_sig -> insert(_L, 0, _V),_sig
+-listAppEmp _L|>__list _V |> __string(_)              --- append(_L, _V),_sig -> insert(_L, 0, _V),_sig
+-listAppVal _L|>__list(_) _V |> __int32(_)
+            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAppVal _L|>__list(_) _V |> __real64(_)
+            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAppVal _L|>__list(_) _V |> __string(_)
+            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAppDer deref(_L),_sig -> _LI,_sig 
             length(_LI),_sig -> _N,_sig
             _N |> __int32(_)                          --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
             
--listappend deref(_L),_sig -> _LI,_sig 
+-listAppDer deref(_L),_sig -> _LI,_sig 
             length(_LI),_sig -> _N,_sig
             _N |> __real64(_)                         --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
 
--listappend deref(_L),_sig -> _LI,_sig 
+-listAppDer deref(_L),_sig -> _LI,_sig 
             length(_LI),_sig -> _N,_sig
             _N |> __string(_)                         --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig
 
--listappend  _V,_sig -> _VP, _sigP                    --- append(_L, _V),_sig -> append(_L, _VP),_sigP
-// get
-// remove
+-listAppR  _V,_sig -> _VP, _sigP                      --- append(_L, _V),_sig -> append(_L, _VP),_sigP
+
+// Get
+-listGetEmp _L |> __list _I |> __int32(_)             --- get(_L, _I),_sig -> __empty, _sig
+-listGetVal _L |> __list(_) _I |>__int32(_)           --- get(_L, _I),_sig -> __get(_L, _I),_sig
+-listGetDer deref(_L),_sig->_LI,_sig _I|>__int32(_)   --- get(_L, _I),_sig -> __get(_LI, _I),_sig
+-listGetRI  _I, _sig -> _IP, _sigP                    --- get(_L, _I),_sig -> get(_L, _IP),_sigP
+
+// Remove
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -plugin                                               --- plugin(_O),_sig -> __plugin(_O),_sig 
 -plugin                                               --- plugin(_O, _X),_sig -> __plugin(_O, _X),_sig 
@@ -303,11 +326,19 @@ __string::= &STRING_SQ
 // !try seq(assign(x, 5), seq(assign(l, []), append(l, deref(x)))),__map
 // !try seq(assign(l, []), for(assign(x, 0), lt(deref(x), 5), postinc(x), append(l, deref(x)))),__map = __done, {l=[0,1,2,3,4], x=5}
 
-!try insert(x, 0, 1.0), {x=[]} = __done, {x=[1.0]}
-!try append(x, 1.0), {x=[]} = __done, {x=[1.0]}
+// !try insert(x, 0, 1.0), {x=[]} = __done, {x=[1.0]}
+// !try append(x, 1.0), {x=[]} = __done, {x=[1.0]}
 
-!try insert(x, 0, "a"), {x=[]} = __done, {x=["a"]}
-!try append(x, "a"), {x=[]} = __done, {x=["a"]}
+// !try insert(x, 0, "a"), {x=[]} = __done, {x=["a"]}
+// !try append(x, "a"), {x=[]} = __done, {x=["a"]}
+
+!try get([], 0),__map = __empty, {=}
+!try get([1], 0),__map = 1, {=}
+!try get([1,2,3,4,5], 2),__map = 3, {=}
+!try get(x, 0), {x=[1]} = 1, {x=[1]}
+!try get(x, 2), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
+!try get(x, add(1,1)), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
