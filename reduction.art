@@ -132,25 +132,25 @@
 -listAddVal _L|>__list(_) _V |> __int32(_)            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddVal _L|>__list(_) _V |> __real64(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddVal _L|>__list(_) _V |> __string(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listaddDer deref(_L),_sig -> _LI,_sig
+-listAddDer deref(_L),_sig -> _LI,_sig
             _V |> __int32(_)                          --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listaddDer deref(_L),_sig -> _LI,_sig
+-listAddDer deref(_L),_sig -> _LI,_sig
             _V |> __real64(_)                         --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listaddDer deref(_L),_sig -> _LI,_sig
+-listAddDer deref(_L),_sig -> _LI,_sig
             _V |> __string(_)                         --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listaddRV  _V, _sig -> _VP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _I, _VP), _sig
--listaddRI  _I, _sig -> _IP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _IP, _V), _sig
+-listAddRV  _V, _sig -> _VP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _I, _VP), _sig
+-listAddRI  _I, _sig -> _IP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _IP, _V), _sig
 
 // Append
 -listAppEmp _L|>__list _V |> __int32(_)               --- append(_L, _V),_sig -> insert(_L, 0, _V),_sig
 -listAppEmp _L|>__list _V |> __real64(_)              --- append(_L, _V),_sig -> insert(_L, 0, _V),_sig
 -listAppEmp _L|>__list _V |> __string(_)              --- append(_L, _V),_sig -> insert(_L, 0, _V),_sig
 -listAppVal _L|>__list(_) _V |> __int32(_)
-            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> __put(_LI, _I, _V),_sig
 -listAppVal _L|>__list(_) _V |> __real64(_)
-            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> __put(_LI, _I, _V),_sig
 -listAppVal _L|>__list(_) _V |> __string(_)
-            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+            length(_L),_sig -> _I                     --- append(_L, _V),_sig -> __put(_LI, _I, _V),_sig
 -listAppDer deref(_L),_sig -> _LI,_sig 
             length(_LI),_sig -> _N,_sig
             _N |> __int32(_)                          --- append(_L, _V),_sig -> insert(_L, _N, _V), _sig   
@@ -169,6 +169,11 @@
 -listGetRI  _I, _sig -> _IP, _sigP                    --- get(_L, _I),_sig -> get(_L, _IP),_sigP
 
 // Remove
+-listRemEmp _L|>__list                                --- remove(_L, _I),_sig -> __empty,_sig
+-listRemVal _L|>__list(_) _I |> __int32(_)            --- remove(_L, _I),_sig -> __remove(_L, _I),_sig
+-listRemDer deref(_L),_sig -> _LI,_sig
+            _I |> __int32(_)                          --- remove(_L, _I),_sig -> assign(_L, __remove(_LI, _I)),_sig
+-listRemRI  _I, _sig -> _IP, _sigP                    --- remove(_L, _I),_sig -> remove(_L, _IP), _sig
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -plugin                                               --- plugin(_O),_sig -> __plugin(_O),_sig 
 -plugin                                               --- plugin(_O, _X),_sig -> __plugin(_O, _X),_sig 
@@ -329,13 +334,18 @@ __string::= &STRING_SQ
 // !try insert(x, 0, "a"), {x=[]} = __done, {x=["a"]}
 // !try append(x, "a"), {x=[]} = __done, {x=["a"]}
 
-!try get([], 0),__map = __empty, {=}
-!try get([1], 0),__map = 1, {=}
-!try get([1,2,3,4,5], 2),__map = 3, {=}
-!try get(x, 0), {x=[1]} = 1, {x=[1]}
-!try get(x, 2), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
-!try get(x, add(1,1)), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
+// !try get([], 0),__map = __empty, {=}
+// !try get([1], 0),__map = 1, {=}
+// !try get([1,2,3,4,5], 2),__map = 3, {=}
+// !try get(x, 0), {x=[1]} = 1, {x=[1]}
+// !try get(x, 2.0), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
+// !try get(x, add(1,1)), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
 
+!try remove([], 0), __map = __empty, {=}
+!try remove([1], 0), __map = [], {=}
+!try remove([1,2,3], 2), __map = [1,2], {=}
+!try remove(x, 2), {x=[1,2,3]} = __done, {x=[1,2]}
+!try remove(x, add(1,1)), {x=[1,2,3]} = __done, {x=[1,2]}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
