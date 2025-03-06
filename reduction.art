@@ -145,16 +145,16 @@
 -listLenD   deref(_L), _sig -> _LI,_sigP              --- length(_L), _sig -> length(_LI) , _sigP
 
 // Insert
--listAddEmp _L|>__list _V |> __int32(_)               --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddEmp _L|>__list _V |> __real64(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddEmp _L|>__list _V |> __string(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddEmp _L|>__list _V |> __list                   --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddEmp _L|>__list _V |> __list(_)                --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddVal _L|>__list(_) _V |> __int32(_)            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddVal _L|>__list(_) _V |> __real64(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddVal _L|>__list(_) _V |> __string(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddVal _L|>__list(_) _V |> __list                --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
--listAddVal _L|>__list(_) _V |> __list(_)             --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __int32(_)               --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __real64(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __string(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __list                   --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __list(_)                --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __int32(_)            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __real64(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __string(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __list                --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __list(_)             --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
 -listAddDer deref(_L),_sig -> _LI,_sig
             _V |> __int32(_)                          --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddDer deref(_L),_sig -> _LI,_sig
@@ -203,7 +203,7 @@
 (*  CFG rules *)
 seq ::= statement^^ | statement seq 
 statement ::= assign^^ | while^^ | for^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^ | prepost^^ ';'^
-assign ::= &ID ':='^ expression ';'^ | &ID ':='^ __list
+assign ::= &ID ':='^ expression ';'^ | &ID ':='^ __list ';'^
 while ::= 'while'^ expression 'do'^ statement
 for ::= 'for'^ '('^ assign expression ';'^ prepost ')'^ 'do'^ statement
 if ::= 'if'^ expression 'then'^ statement | 'if'^ expression 'then'^ statement 'else'^ statement | 'if'^ expression 'then'^ statement 'otherwise if'^ expression 'then'^ statement 'else'^ statement
@@ -211,7 +211,7 @@ if ::= 'if'^ expression 'then'^ statement | 'if'^ expression 'then'^ statement '
 plugin ::= 'plugin'^ '('^ expressions^ ')'^  
 play ::= 'play'^ __string ','^ __string ','^ __string
 expressions ::= expression | expression ','^ expressions^
-expression ::= e0^^ | logic^^
+expression ::= e0^^ | logic^^ | '['^ __list^^ ']'^
 logic ::= boolean^^ | and^^ | or^^ | not^^
   and ::= boolean '&&'^ boolean
   or ::= boolean '||'^ boolean
@@ -249,7 +249,7 @@ e3 ::= e4^^ |
 e4 ::= e5^^ |
     e5 exp^^ e4 (*exponentiate *)
 
-e5 ::= __int32^^ | (*Integer literal *)
+e5 ::= __int32^^ | __real64^^ | (*Integer literal *)
      '('^ e1^^ ')'^ (*Parenthesised expression *)
 
 
@@ -271,7 +271,8 @@ __int32 ::= &INTEGER
 __real64 ::= &REAL
 __bool ::= 'true' | 'false'
 __string::= &STRING_SQ
-__list ::= '[]'^ | '['^ expressions^ ']'^
+__list ::= #^ | __l
+__l ::= e0 | e0 ','^ __l
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // !try assign(a, 10), __map= __done, {a=10}
@@ -410,8 +411,13 @@ __list ::= '[]'^ | '['^ expressions^ ']'^
 // !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
 // !try append(x, [2]), {x=[]} = __done, {x=[[2]]}
 
-!try "x := []" = __done, {x=[]}
-!try "x := [1,2,3,4]" = __done, {x=[1,2,3,4]}
+!trace 3
+!try "x := [];" = __done, {x=[]}
+!try "x := [1];" = __done, {x=[1]}
+!try "x := [1,2,3,4];" = __done, {x=[1,2,3,4]}
+// !printraw term [1,2,3,4]
+!try "x := [2+2, 3+3];" = __done, {x=[4, 6]}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
@@ -424,4 +430,4 @@ __list ::= '[]'^ | '['^ expressions^ ']'^
 //!try "plugin('init'); plugin('play', 'B', 'A', 'D');"
 //!try "plugin('init'); play 'B', 'A', 'D';" 
 //!try "plugin('weird', 666); "
- 
+
