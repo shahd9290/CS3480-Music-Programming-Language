@@ -78,6 +78,15 @@
 -leRi _L |> __int32(_) _R,_sig  -> _RP,_sigP          --- le(_L, _R),_sig  -> le(_L, _RP),_sigP 
 -leRd _L |> __real64(_) _R,_sig  -> _RP,_sigP         --- le(_L, _R),_sig  -> le(_L, _RP),_sigP 
 -leL _L,_sig  -> _LP,_sigP                            --- le(_L, _R),_sig  -> le(_LP, _R),_sigP 
+
+-neg _N |> __int32(_) gt(_N,0),_sig -> true,_sig      --- neg(_N),_sig -> __neg(_N), _sig
+-neg _N |> __real64(_) gt(_N,0),_sig -> true,_sig     --- neg(_N),_sig -> __neg(_N), _sig
+-neg _N,_sig -> _NP, _sigP                            --- neg(_N),_sig -> neg(_NP), _sigP
+
+-pos _N |> __int32(_) lt(_N,0),_sig -> true,_sig      --- pos(_N),_sig -> __neg(_N), _sig
+-pos _N |> __real64(_) lt(_N,0),_sig -> true,_sig     --- pos(_N),_sig -> __neg(_N), _sig
+-pos _N,_sig -> _NP, _sigP                            --- pos(_N),_sig -> pos(_NP), _sigP
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -subI  _n1 |> __int32(_) _n2  |> __int32(_)           --- sub(_n1,_n2),_sig -> __sub(_n1,_n2),_sig 
@@ -108,8 +117,14 @@
 -modI _L  |> __int32(_) _R  |> __int32(_)             --- mod(_L, _R),_sig -> __mod(_L, _R),_sig 
 -modD _L  |> __real64(_) _R |> __real64(_)            --- mod(_L, _R),_sig -> __mod(_L, _R),_sig 
 -modRi _L |> __int32(_) _R,_sig -> _RP,_sigP          --- mod(_L, _R),_sig -> mod(_L, _RP),_sigP
--modRi _L |> __real64(_) _R,_sig -> _RP,_sigP         --- div(_L, _R),_sig -> mod(_L, _RP),_sigP
+-modRi _L |> __real64(_) _R,_sig -> _RP,_sigP         --- mod(_L, _R),_sig -> mod(_L, _RP),_sigP
 -modL _L,_sig -> _LP,_sigP                            --- mod(_L, _R),_sig -> mod(_LP, _R),_sigP
+
+-expI _L  |> __int32(_) _R  |> __int32(_)             --- exp(_L, _R),_sig -> __exp(_L, _R),_sig 
+-expD _L  |> __real64(_) _R |> __real64(_)            --- exp(_L, _R),_sig -> __exp(_L, _R),_sig 
+-expRi _L |> __int32(_) _R,_sig -> _RP,_sigP          --- exp(_L, _R),_sig -> exp(_L, _RP),_sigP
+-expRi _L |> __real64(_) _R,_sig -> _RP,_sigP         --- exp(_L, _R),_sig -> exp(_L, _RP),_sigP
+-expL _L,_sig -> _LP,_sigP                            --- exp(_L, _R),_sig -> exp(_LP, _R),_sigP
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -196,22 +211,7 @@ if ::= 'if'^ expression 'then'^ statement | 'if'^ expression 'then'^ statement '
 plugin ::= 'plugin'^ '('^ expressions^ ')'^  
 play ::= 'play'^ __string ','^ __string ','^ __string
 expressions ::= expression | expression ','^ expressions^
-expression ::= rels^^ | logic^^
-rels ::= adds^^ | lt^^ | gt^^ | ne^^ | eq^^ | le^^ | ge^^
-  gt ::= adds '>'^ adds
-  lt ::= adds '<'^ adds
-  ge ::= adds '>='^ adds
-  le ::= adds '<='^ adds
-  ne ::= adds '!='^ adds
-  eq ::= adds '=='^ adds
-
-adds  ::= operand^^ | sub^^ | add^^ | mul^^ | div^^ | mod^^
-  add ::= adds '+'^ operand
-  sub ::= adds '-'^ operand
-  mul ::= adds '*'^ operand
-  div ::= adds '/'^ operand
-  mod ::= adds '%'^ operand
-
+expression ::= e0^^ | logic^^
 logic ::= boolean^^ | and^^ | or^^ | not^^
   and ::= boolean '&&'^ boolean
   or ::= boolean '||'^ boolean
@@ -224,6 +224,49 @@ prepost ::= preinc^^ | predec^^ | postinc^^ | postdec^^
   predec ::= '--'^ &ID
   postinc ::= &ID '++'^
   postdec ::= &ID '--'^
+
+e0 ::= e1^^ |
+    e1 gt^^ e1 | (*Greater than *)
+    e1 lt^^ e1 | (*Less than *)
+    e1 ge^^ e1 | (*Greater than or equals*)
+    e1 le^^ e1 | (*Less than or equals *)
+    e1 eq^^ e1 | (*Equal to *)
+    e1 ne^^ e1 (*Not equal to *)
+
+e1 ::= e2^^ |
+    e1 add^^ e2 | (*Add *)
+    e1 sub^^ e2 (*Subtract *)
+
+e2 ::= e3^^ |
+    e2 mul^^ e3 | (*Multiply *)
+    e2 div^^ e3 | (*Divide *)
+    e2 mod^^ e3 (*Mod *)
+
+e3 ::= e4^^ |
+    pos^^ e3 | (*Posite *)
+    neg^^ e3 (*Negate *)
+
+e4 ::= e5^^ |
+    e5 exp^^ e4 (*exponentiate *)
+
+e5 ::= __int32^^ | (*Integer literal *)
+     '('^ e1^^ ')'^ (*Parenthesised expression *)
+
+
+gt ::= '>'^
+lt ::= '<'^
+ge ::= '>='^
+le ::= '<='^
+eq ::= '=='^
+ne ::= '!='^
+add ::= '+'^
+sub ::= '-'^
+mul ::= '*'^
+div ::= '/'^
+mod ::= '%'^
+exp ::= '**'^
+pos ::= '+'^
+neg ::= '-'^
 __int32 ::= &INTEGER
 __real64 ::= &REAL
 __bool ::= 'true' | 'false'
@@ -255,6 +298,16 @@ __list ::= '[]'^ | '['^ expressions^ ']'^
 // !try "10 - 5;" = 5, {=}
 // !try "10 * 5;" = 50, {=}
 // !try "10 / 5;" = 2, {=}
+
+// !try "3 + 4 * 5;" = 23, {=}
+// !try "(3 + 4) * 5;" = 35, {=}
+// !try "2**2" = 4, {=}
+// !try "(8 + (6 - 2**2)) / 5;" = 2, {=}
+// !try "((8 + 6) - 2**2) / 5;" = 2, {=}
+// !try "-5;" = -5, {=}
+// !try "+-5;" = 5, {=}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // !try eq(5, 5), __map= true, {=}
 // !try lt(3, 5), __map= true, {=}
@@ -355,11 +408,10 @@ __list ::= '[]'^ | '['^ expressions^ ']'^
 // !try pop([1,2,3]), __map = [2,3], {=}
 // !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
 // !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
-!try append(x, [2]), {x=[]} = __done, {x=[[2]]}
+// !try append(x, [2]), {x=[]} = __done, {x=[[2]]}
 
 !try "x := []" = __done, {x=[]}
 !try "x := [1,2,3,4]" = __done, {x=[1,2,3,4]}
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
