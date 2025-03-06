@@ -133,15 +133,23 @@
 -listAddEmp _L|>__list _V |> __int32(_)               --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddEmp _L|>__list _V |> __real64(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddEmp _L|>__list _V |> __string(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __list                   --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddEmp _L|>__list _V |> __list(_)                --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddVal _L|>__list(_) _V |> __int32(_)            --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddVal _L|>__list(_) _V |> __real64(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddVal _L|>__list(_) _V |> __string(_)           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __list                --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddVal _L|>__list(_) _V |> __list(_)             --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddDer deref(_L),_sig -> _LI,_sig
             _V |> __int32(_)                          --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddDer deref(_L),_sig -> _LI,_sig
             _V |> __real64(_)                         --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddDer deref(_L),_sig -> _LI,_sig
             _V |> __string(_)                         --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddDer deref(_L),_sig -> _LI,_sig
+            _V |> __list                              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
+-listAddDer deref(_L),_sig -> _LI,_sig
+            _V |> __list(_)                           --- insert(_L, _I, _V),_sig -> assign(_L, __put(_LI, _I, _V)),_sig
 -listAddRV  _V, _sig -> _VP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _I, _VP), _sig
 -listAddRI  _I, _sig -> _IP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _IP, _V), _sig
 
@@ -348,8 +356,10 @@ __list ::= '[]'^ | '['^ expressions^ ']'^
 // !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
 // !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
 
-!try "x := []"
-!try "x := [1,2,3,4]"
+// !try "x := []"
+// !try "x := [1,2,3,4]"
+
+!try append(x, [2]), {x=[]}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (* GCD examples *)
