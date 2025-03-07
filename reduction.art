@@ -6,8 +6,8 @@
 -assignI _n |> __int32(_)                             --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
 -assignD _n |> __real64(_)                            --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
 -assignB _n |> __bool(_)                              --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
--assignLValue _n |> __list(_)                         --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
 -assignLEmpty _n |> __list                            --- assign(_X,_n),_sig -> __done, __put(_sig, _X, _n)
+-assignLValue _n |> __list(_)                         --- assign(_X,_n),_sig -> seq(for(i, _n, resolve(deref(i), __get(_sig,_X), _X)), __done), __put(_sig, _X, _n)
 
 -assignR _E,_sig -> _I,_sigP                          --- assign(_X,_E),_sig -> assign(_X,_I),_sigP
 
@@ -15,6 +15,7 @@
 
 -sequenceDone  _C |> __int32(_)                       --- seq(__done, _C),_sig -> __done,_sig
 -sequenceDone                                         --- seq(__done, _C),_sig -> _C,_sig
+-sequenceL _n |> __list(_) _R,_sig -> _RP, _sigP      --- seq(_n, _R), _sig -> _RP, _sigP
 -sequenceI _n |> __int32(_) _R,_sig -> _RP, _sigP     --- seq(_n, _R), _sig -> seq(_RP, _n), _sigP
 -sequence _C1,_sig -> _C1P,_sigP                      --- seq(_C1,_C2),_sig -> seq(_C1P,_C2),_sigP
 
@@ -25,6 +26,7 @@
 
 -while                                                --- while(_E,_C),_sig -> if(_E,seq(_C,while(_E,_C)),__done),_sig
 -for                                                  --- for(_I, _C, _U, _B), _sig -> seq(_I, while(_C, seq(_B, _U))), _sig
+-forList  _L |> __list(_)                             --- for(_ID, _L, _B),_sig -> for(assign(_ID, 0), lt(deref(_ID), length(_L)), preinc(_ID), _B),_sig
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -and  _L |> __bool(_) _R |> __bool(_)                 --- and(_L, _R),_sig -> __and(_L, _R),_sig
@@ -191,6 +193,26 @@
 
 // Pop - Remove from 0
 -listPop                                              --- pop(_L),_sig -> remove(_L, 0), _sig
+
+-listResolve _I |> __int32(_) 
+             get(_L, _I),_sig |> __int32(_)           --- resolve(_I, _L, _SID),_sig -> __done, _sig
+-listResolve _I |> __int32(_) 
+             get(_L, _I),_sig |> __real64(_)          --- resolve(_I, _L, _SID),_sig -> __done, _sig
+-listResolve _I |> __int32(_) 
+             get(_L, _I),_sig |> __string(_)          --- resolve(_I, _L, _SID),_sig -> __done, _sig
+-listResolve _I |> __int32(_) 
+             get(_L, _I),_sig |> __list               --- resolve(_I, _L, _SID),_sig -> __done, _sig
+-listResolve _I |> __int32(_) 
+             get(_L, _I),_sig |> __list(_)            --- resolve(_I, _L, _SID),_sig -> __done, _sig
+
+-listResolve _I |> __int32(_) // Check I is int
+             get(_L, _I),_sig -> _RP, _sigP // Get Rewrite function assign to RP
+             _RP, _sigP -> _RPP, _sigPP // Rewrite function in RP to RPP
+             remove(_L, _I),_sig -> _LI, _sigPP // Remove original function
+             __put(_LI, _I, _RPP),_sigPP -> _LIP, _sigPP
+                                                      --- resolve(_I, _L, _SID),_sig -> __done, __put(_sigPP, _SID, _LIP) // Ideally assign new list to the value in sig
+             
+-listResolve _I, _sig -> _IP, _sigP                   --- resolve(_I, _L, _SID),_sig -> resolve(_IP, _L, _SID), _sigP
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 -plugin                                               --- plugin(_O),_sig -> __plugin(_O),_sig 
@@ -416,16 +438,21 @@ __l ::= e0 | e0 ','^ __l
 // !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
 // !try append(x, [2]), {x=[]} = __done, {x=[[2]]}
 
-!try printout("hello"), __map 
-!try printout(123), __map 
-!try printout(123.0), __map 
-!try printout(true), __map 
-!try printout(add(10,10)), __map 
+// !try printout("hello"), __map 
+// !try printout(123), __map 
+// !try printout(123.0), __map 
+// !try printout(true), __map 
+// !try printout(add(10,10)), __map 
 
 
 // !try "x := [];" = __done, {x=[]}
 // !try "x := [1];" = __done, {x=[1]}
 // !try "x := [1,2,3,4];" = __done, {x=[1,2,3,4]}
+!trace 3
+// !try resolve(0, [add(2,2)]), {x=[add(2,2)]} = [4], {x=[add(2,2)]} // No reassignment yet.
+// !try resolve(1, [4, add(2,2)]), {x=[4, add(2,2)]} = [4, 4], {x=[4, add(2,2)]} // No reassignment yet.
+
+!try assign(x, [add(2, 2), add(3, 3)]), {x=[add(2, 2), add(3, 3)]} = __done, {x=[4,6]}
 // !try "x := [2+2, 3+3];" = __done, {x=[4, 6]}
 
 
