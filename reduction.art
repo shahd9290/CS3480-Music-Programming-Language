@@ -199,6 +199,11 @@
 -plugin                                               --- plugin(_O, _X, _Y, _Z),_sig -> __plugin(_O, _X, _Y, _Z),_sig 
 
 -play                                                 --- play(_A, _B, _C),_sig -> __plugin("play", _A, _B, _C),_sig 
+-printout _V |> __string(_)                           --- printout(_V), _sig -> __plugin("printout", _V),_sig
+-printout _V |> __int32(_ )                           --- printout(_V), _sig -> __plugin("printout", _V),_sig
+-printout _V |> __real64(_)                           --- printout(_V), _sig -> __plugin("printout", _V),_sig
+-printout _V |> __bool(_)                             --- printout(_V), _sig -> __plugin("printout", _V),_sig
+-printout _V,_sig -> _VP, _sigP                       --- printout(_V), _sig -> printout(_VP),_sigP
 
 (*  CFG rules *)
 seq ::= statement^^ | statement seq 
@@ -411,12 +416,17 @@ __l ::= e0 | e0 ','^ __l
 // !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
 // !try append(x, [2]), {x=[]} = __done, {x=[[2]]}
 
-!trace 3
-!try "x := [];" = __done, {x=[]}
-!try "x := [1];" = __done, {x=[1]}
-!try "x := [1,2,3,4];" = __done, {x=[1,2,3,4]}
-// !printraw term [1,2,3,4]
-!try "x := [2+2, 3+3];" = __done, {x=[4, 6]}
+!try printout("hello"), __map 
+!try printout(123), __map 
+!try printout(123.0), __map 
+!try printout(true), __map 
+!try printout(add(10,10)), __map 
+
+
+// !try "x := [];" = __done, {x=[]}
+// !try "x := [1];" = __done, {x=[1]}
+// !try "x := [1,2,3,4];" = __done, {x=[1,2,3,4]}
+// !try "x := [2+2, 3+3];" = __done, {x=[4, 6]}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

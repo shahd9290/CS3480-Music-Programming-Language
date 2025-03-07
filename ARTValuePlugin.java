@@ -27,6 +27,11 @@ public class ARTValuePlugin extends AbstractValuePlugin {
       initialise();
       break;
 
+    case "printout":
+      for (int i = 1; i < args.length; i++)
+        System.out.println(String.valueOf(args[i]));
+      break;
+
     case "play":
       for (int i = 1; i < args.length; i++)
         playChord((String) args[i], Chord.MINOR7);
