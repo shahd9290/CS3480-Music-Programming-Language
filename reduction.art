@@ -227,7 +227,7 @@ logic ::= boolean^^ | and^^ | or^^ | not^^
   and ::= boolean '&&'^ boolean
   or ::= boolean '||'^ boolean
   not ::= '!'^ boolean
-operand ::= __real64^^ | __int32^^ | deref^^ | __string^^ | plugin^^
+operand ::= e0^^ | deref^^ | __string^^ | plugin^^
 boolean ::= __bool^^
 deref   ::= &ID
 prepost ::= preinc^^ | predec^^ | postinc^^ | postdec^^ 
@@ -285,13 +285,12 @@ exp ::= '**'^
 pos ::= '+'^
 neg ::= '-'^
 
-vals::= e0^^ | __string^^
 __int32 ::= &INTEGER
 __real64 ::= &REAL
 __bool ::= 'true' | 'false'
 __string::= &STRING_SQ
 __list ::= #^ | __l
-__l ::= vals | vals ','^ __l
+__l ::= operand | operand ','^ __l
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Arithmetic Tests
@@ -406,13 +405,13 @@ __l ::= vals | vals ','^ __l
 // !try seq(assign(x, []), seq(insert(x, 0, 1), seq(insert(x, 0, 2), insert(x, 0, 3)))), __map = __done, {x=[3,2,1]}
 // !try seq(assign(x, []), seq(insert(x, 0, 1), seq(insert(x, 1, 2), insert(x, 2, 3)))), __map = __done, {x=[1,2,3]}
 
-//Length
+// Length
 // !try length([1,2,3]), __map = 3, {=}
 // !try seq(assign(x, [1,2,3]), length(x)), __map = 3, {x=[1,2,3]}
 // !try length([]),__map = 0, {=}
 // !try length([1]),__map = 1, {=}
 
-//Append
+// Append
 // !try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
 // !try insert(x, 0, 1), {x=[]} = __done, {x=[1]}
 // !try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
