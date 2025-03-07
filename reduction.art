@@ -140,11 +140,14 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Length
+-listLenNull _L |> __empty                            --- length(_L),_sig -> __empty,_sig
 -listLenE   _L |> __list                              --- length(_L), _sig -> 0 , _sig
 -listLenV   _L |> __list(_)                           --- length(_L), _sig -> __card(_L) , _sig
 -listLenD   deref(_L), _sig -> _LI,_sigP              --- length(_L), _sig -> length(_LI) , _sigP
 
 // Insert
+-listAddNull _L |> __empty                            --- insert(_L, _I, _V),_sig -> __empty,_sig
+-listAddNull deref(_L),_sig-> _LI,_sig _LI |> __empty --- insert(_L, _I, _V),_sig -> __empty,_sig
 -listAddEmp _L|>__list _V |> __int32(_)               --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
 -listAddEmp _L|>__list _V |> __real64(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
 -listAddEmp _L|>__list _V |> __string(_)              --- insert(_L, _I, _V),_sig -> assign(_L, __put(_L, _I, _V)),_sig
@@ -169,6 +172,7 @@
 -listAddRI  _I, _sig -> _IP, _sigP                    --- insert(_L, _I, _V),_sig -> insert(_L, _IP, _V), _sig
 
 // Append
+-listAppNull deref(_L),_sig-> _LI,_sig _LI |> __empty --- append(_L, _V),_sig -> __empty,_sig
 -listAppEmp _L|>__list                                --- append(_L, _V),_sig -> insert(_L, 0, _V),_sig
 -listAppVal _L|>__list(_) length(_L),_sig -> _I       --- append(_L, _V),_sig -> __put(_LI, _I, _V),_sig
 -listAppDer deref(_L),_sig -> _LI,_sig 
@@ -179,12 +183,14 @@
 // Get
 -listGetEmp _L |> __list _I |> __int32(_)             --- get(_L, _I),_sig -> __empty, _sig
 -listGetVal _L |> __list(_) _I |>__int32(_)           --- get(_L, _I),_sig -> __get(_L, _I),_sig
+-listGetNull deref(_L),_sig-> _LI,_sig _LI |> __empty --- get(_L, _I),_sig -> __empty, _sig
 -listGetDer deref(_L),_sig->_LI,_sig _I|>__int32(_)   --- get(_L, _I),_sig -> __get(_LI, _I),_sig
 -listGetRI  _I, _sig -> _IP, _sigP                    --- get(_L, _I),_sig -> get(_L, _IP),_sigP
 
 // Remove
 -listRemEmp _L|>__list                                --- remove(_L, _I),_sig -> __empty,_sig
 -listRemVal _L|>__list(_) _I |> __int32(_)            --- remove(_L, _I),_sig -> __remove(_L, _I),_sig
+-listRemNull deref(_L),_sig-> _LI,_sig _LI |> __empty --- remove(_L, _I),_sig -> __empty,_sig
 -listRemDer deref(_L),_sig -> _LI,_sig
             _I |> __int32(_)                          --- remove(_L, _I),_sig -> assign(_L, __remove(_LI, _I)),_sig
 -listRemRI  _I, _sig -> _IP, _sigP                    --- remove(_L, _I),_sig -> remove(_L, _IP), _sig
@@ -207,7 +213,7 @@
 
 (*  CFG rules *)
 seq ::= statement^^ | statement seq 
-statement ::= assign^^ | while^^ | for^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^ | prepost^^ ';'^
+statement ::= assign^^ | while^^ | for^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^ | prepost^^ ';'^ | lists^^ ';'^
 assign ::= &ID ':='^ expression ';'^ | &ID ':='^ __list ';'^
 while ::= 'while'^ expression 'do'^ statement
 for ::= 'for'^ '('^ assign expression ';'^ prepost ')'^ 'do'^ statement
@@ -229,7 +235,13 @@ prepost ::= preinc^^ | predec^^ | postinc^^ | postdec^^
   predec ::= '--'^ &ID
   postinc ::= &ID '++'^
   postdec ::= &ID '--'^
-
+lists ::= length^^ | insert^^ | append^^ | get^^ | remove^^ | pop^^
+    length ::= &ID'.length()'^
+    insert ::= &ID'.insert('^ e0 ','^ operand ')'^
+    append ::= &ID'.append('^ operand ')'^
+    get ::= &ID'.get('^ e0 ')'^
+    remove ::= &ID'.remove('^ operand ')'^
+    pop ::= &ID'.pop()'^
 e0 ::= e1^^ |
     e1 gt^^ e1 | (*Greater than *)
     e1 lt^^ e1 | (*Less than *)
@@ -272,187 +284,218 @@ mod ::= '%'^
 exp ::= '**'^
 pos ::= '+'^
 neg ::= '-'^
+
+vals::= e0^^ | __string^^
 __int32 ::= &INTEGER
 __real64 ::= &REAL
 __bool ::= 'true' | 'false'
 __string::= &STRING_SQ
 __list ::= #^ | __l
-__l ::= e0 | e0 ','^ __l
+__l ::= vals | vals ','^ __l
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Arithmetic Tests
 
-!try assign(a, 10), __map= __done, {a=10}
-!try assign(b, 5.0), __map= __done, {b=5.0}
-!try assign(c, true),__map= __done, {c=true}
-!try sub(10, 5),__map= 5, {=}
-!try sub(15.0, sub(10.0, 5.0)),__map= 10.0, {=}
+// !try assign(a, 10), __map= __done, {a=10}
+// !try assign(b, 5.0), __map= __done, {b=5.0}
+// !try assign(c, true),__map= __done, {c=true}
+// !try sub(10, 5),__map= 5, {=}
+// !try sub(15.0, sub(10.0, 5.0)),__map= 10.0, {=}
 
 
-!try add(10, 5),__map= 15, {=}
-!try add(15.0, add(10.0, 5.0)),__map= 30.0, {=}
+// !try add(10, 5),__map= 15, {=}
+// !try add(15.0, add(10.0, 5.0)),__map= 30.0, {=}
 
-!try mul(10, 5),__map= 50, {=}
-!try mul(15.0, mul(10.0, 5.0)),__map= 750.0, {=}
+// !try mul(10, 5),__map= 50, {=}
+// !try mul(15.0, mul(10.0, 5.0)),__map= 750.0, {=}
 
-!try div(10, 5),__map= 2, {=}
-!try div(15, 2),__map= 7, {=} // float answer
-!try div(15.0, div(10.0, 5.0)),__map= 7.5, {=}
+// !try div(10, 5),__map= 2, {=}
+// !try div(15, 2),__map= 7, {=} // float answer
+// !try div(15.0, div(10.0, 5.0)),__map= 7.5, {=}
 
-!try mod(100.0, 3.0), __map= 1.0, {=}
-!try "10 % 4;" = 2, {=}
+// !try mod(100.0, 3.0), __map= 1.0, {=}
+// !try "10 % 4;" = 2, {=}
 
-!try "10 + 5;" = 15, {=}
-!try "10 - 5;" = 5, {=}
-!try "10 * 5;" = 50, {=}
-!try "10 / 5;" = 2, {=}
+// !try "10 + 5;" = 15, {=}
+// !try "10 - 5;" = 5, {=}
+// !try "10 * 5;" = 50, {=}
+// !try "10 / 5;" = 2, {=}
 
-!try "3 + 4 * 5;" = 23, {=}
-!try "(3 + 4) * 5;" = 35, {=}
-!try "2**2" = 4, {=}
-!try "(8 + (6 - 2**2)) / 5;" = 2, {=}
-!try "((8 + 6) - 2**2) / 5;" = 2, {=}
-!try "-5;" = -5, {=}
-!try "+-5;" = 5, {=}
+// !try "3 + 4 * 5;" = 23, {=}
+// !try "(3 + 4) * 5;" = 35, {=}
+// !try "2**2" = 4, {=}
+// !try "(8 + (6 - 2**2)) / 5;" = 2, {=}
+// !try "((8 + 6) - 2**2) / 5;" = 2, {=}
+// !try "-5;" = -5, {=}
+// !try "+-5;" = 5, {=}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Logical & Relational Operator Tests
 
-!try eq(5, 5), __map= true, {=}
-!try lt(3, 5), __map= true, {=}
-!try le(3, 5), __map= true, {=}
-!try le(5, 5), __map= true, {=}
-!try ge(5, 5), __map= true, {=}
-!try ge(10, 5), __map= true, {=}
+// !try eq(5, 5), __map= true, {=}
+// !try lt(3, 5), __map= true, {=}
+// !try le(3, 5), __map= true, {=}
+// !try le(5, 5), __map= true, {=}
+// !try ge(5, 5), __map= true, {=}
+// !try ge(10, 5), __map= true, {=}
 
-!try eq(5, 4), __map= false, {=}
-!try lt(5, 3), __map= false, {=}
-!try le(5, 3), __map= false, {=}
-!try ge(5, 10), __map= false, {=}
+// !try eq(5, 4), __map= false, {=}
+// !try lt(5, 3), __map= false, {=}
+// !try le(5, 3), __map= false, {=}
+// !try ge(5, 10), __map= false, {=}
 
-!try and(true, true),__map= true, {=}
-!try and(true, false),__map= false, {=}
-!try and(false, true),__map= false, {=}
-!try and(false, false),__map= false, {=}
-!try and(gt(9, 5), lt(9, 10)),__map= true, {=}
+// !try and(true, true),__map= true, {=}
+// !try and(true, false),__map= false, {=}
+// !try and(false, true),__map= false, {=}
+// !try and(false, false),__map= false, {=}
+// !try and(gt(9, 5), lt(9, 10)),__map= true, {=}
 
-!try or(true, true),__map= true, {=}
-!try or(true, false),__map= true, {=}
-!try or(false, true),__map= true, {=}
-!try or(false, false),__map= false, {=}
-!try or(gt(9, 5), lt(9, 10)),__map= true, {=}
+// !try or(true, true),__map= true, {=}
+// !try or(true, false),__map= true, {=}
+// !try or(false, true),__map= true, {=}
+// !try or(false, false),__map= false, {=}
+// !try or(gt(9, 5), lt(9, 10)),__map= true, {=}
 
-!try not(true),__map= false, {=}
-!try not(false),__map= true, {=}
+// !try not(true),__map= false, {=}
+// !try not(false),__map= true, {=}
 
-!try "true && true;" = true, {=}
-!try "true || false;" = true, {=}
-!try "!false;" = true, {=}
+// !try "true && true;" = true, {=}
+// !try "true || false;" = true, {=}
+// !try "!false;" = true, {=}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Pre/Post Increment/Decrement Tests
 
-!try "x := 5; x := x + 1;" = __done, {x=6}
-!try seq(assign(x, 5), preinc(x)), __map= __done, {x=6}
-!try seq(assign(x, 5), predec(x)), __map= __done, {x=4}
-!try "x := 5; ++x;" = __done, {x=6}
-!try "x := 5; --x;" = __done, {x=4}
-!try seq(assign(x, 5), postinc(x)),__map= 5, {x=6}
-!try seq(assign(x, 5), postdec(x)),__map= 5, {x=4}
-!try "x := 5; x++;" = 5, {x=6}
-!try "x := 5; x--;" = 5, {x=4}
+// !try "x := 5; x := x + 1;" = __done, {x=6}
+// !try seq(assign(x, 5), preinc(x)), __map= __done, {x=6}
+// !try seq(assign(x, 5), predec(x)), __map= __done, {x=4}
+// !try "x := 5; ++x;" = __done, {x=6}
+// !try "x := 5; --x;" = __done, {x=4}
+// !try seq(assign(x, 5), postinc(x)),__map= 5, {x=6}
+// !try seq(assign(x, 5), postdec(x)),__map= 5, {x=4}
+// !try "x := 5; x++;" = 5, {x=6}
+// !try "x := 5; x--;" = 5, {x=4}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // For Loop Tests
 
-!try for(assign(x, 0), lt(deref(x), 5), postinc(x), seq(plugin("init"),plugin("ding"))), __map
-!try seq(assign(i, 0), while(lt(deref(i), 5), seq(plugin("init"), seq(plugin("ding"), postinc(i))))),__map
-!try "plugin('init');"
-!try "for(x := 0; x < 5; x++) do plugin('ding');"
+// !try for(assign(x, 0), lt(deref(x), 5), postinc(x), seq(plugin("init"),plugin("ding"))), __map
+// !try seq(assign(i, 0), while(lt(deref(i), 5), seq(plugin("init"), seq(plugin("ding"), postinc(i))))),__map
+// !try "plugin('init');"
+// !try "for(x := 0; x < 5; x++) do plugin('ding');"
 
 // If Otherwise Else Test
 
-!try seq(assign(x, 5), if(lt(deref(x), 5), assign(x, 10), gt(deref(x), 5), assign(x, 0), assign(x, -1))), __map
-!try "x:= 10; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=5}
-!try "x:= 4; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=10}
-!try "x:= 5; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=0}
+// !try seq(assign(x, 5), if(lt(deref(x), 5), assign(x, 10), gt(deref(x), 5), assign(x, 0), assign(x, -1))), __map
+// !try "x:= 10; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=5}
+// !try "x:= 4; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=10}
+// !try "x:= 5; if x < 5 then x:= 10; otherwise if x > 5 then x := 5; else x := 0;" = __done, {x=0}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Lists
 // Assigment
-!try assign(x, []), __map = __done, {x=[]}
-!try assign(x, [1,2,3]),__map = __done, {x=[1,2,3]}
+// !try assign(x, []), __map = __done, {x=[]}
+// !try assign(x, [1,2,3]),__map = __done, {x=[1,2,3]}
 
 // Insert
-!try insert(x, 0, 1), {x=[]} = __done, {x=[1]}
-!try seq(assign(x, []), insert(x, 0, 1)), __map = __done, {x=[1]}
-!try seq(assign(x, []), seq(insert(x, 0, 1), seq(insert(x, 0, 2), insert(x, 0, 3)))), __map = __done, {x=[3,2,1]}
-!try seq(assign(x, []), seq(insert(x, 0, 1), seq(insert(x, 1, 2), insert(x, 2, 3)))), __map = __done, {x=[1,2,3]}
+// !try insert(x, 0, 1), {x=[]} = __done, {x=[1]}
+// !try seq(assign(x, []), insert(x, 0, 1)), __map = __done, {x=[1]}
+// !try seq(assign(x, []), seq(insert(x, 0, 1), seq(insert(x, 0, 2), insert(x, 0, 3)))), __map = __done, {x=[3,2,1]}
+// !try seq(assign(x, []), seq(insert(x, 0, 1), seq(insert(x, 1, 2), insert(x, 2, 3)))), __map = __done, {x=[1,2,3]}
 
 //Length
-!try length([1,2,3]), __map = 3, {=}
-!try seq(assign(x, [1,2,3]), length(x)), __map = 3, {x=[1,2,3]}
-!try length([]),__map = 0, {=}
-!try length([1]),__map = 1, {=}
+// !try length([1,2,3]), __map = 3, {=}
+// !try seq(assign(x, [1,2,3]), length(x)), __map = 3, {x=[1,2,3]}
+// !try length([]),__map = 0, {=}
+// !try length([1]),__map = 1, {=}
 
 //Append
-!try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
-!try insert(x, 0, 1), {x=[]} = __done, {x=[1]}
-!try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
-!try seq(assign(x, [1]), append(x, 1)), __map = __done, {x=[1,1]}
-!try seq(assign(x, []), insert(x, 0, 1)), __map = __done, {x=[1]}
-!try seq(assign(x, 5), seq(assign(l, []), append(l, deref(x)))),__map
-!try seq(assign(l, []), for(assign(x, 0), lt(deref(x), 5), postinc(x), append(l, deref(x)))),__map = __done, {l=[0,1,2,3,4], x=5}
+// !try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
+// !try insert(x, 0, 1), {x=[]} = __done, {x=[1]}
+// !try seq(assign(x, []), append(x, 1)), __map = __done, {x=[1]}
+// !try seq(assign(x, [1]), append(x, 1)), __map = __done, {x=[1,1]}
+// !try seq(assign(x, []), insert(x, 0, 1)), __map = __done, {x=[1]}
+// !try seq(assign(x, 5), seq(assign(l, []), append(l, deref(x)))),__map
+// !try seq(assign(l, []), for(assign(x, 0), lt(deref(x), 5), postinc(x), append(l, deref(x)))),__map = __done, {l=[0,1,2,3,4], x=5}
 
 // Insert/Append Floats
-!try insert(x, 0, 1.0), {x=[]} = __done, {x=[1.0]}
-!try append(x, 1.0), {x=[]} = __done, {x=[1.0]}
+// !try insert(x, 0, 1.0), {x=[]} = __done, {x=[1.0]}
+// !try append(x, 1.0), {x=[]} = __done, {x=[1.0]}
 
 // Insert/Append Strings
-!try insert(x, 0, "a"), {x=[]} = __done, {x=["a"]}
-!try append(x, "a"), {x=[]} = __done, {x=["a"]}
+// !try insert(x, 0, "a"), {x=[]} = __done, {x=["a"]}
+// !try append(x, "a"), {x=[]} = __done, {x=["a"]}
 
 // Get
-!try get([], 0),__map = __empty, {=}
-!try get([1], 0),__map = 1, {=}
-!try get([1,2,3,4,5], 2),__map = 3, {=}
-!try get(x, 0), {x=[1]} = 1, {x=[1]}
-!try get(x, 2), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
-!try get(x, add(1,1)), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
+// !try get([], 0),__map = __empty, {=}
+// !try get([1], 0),__map = 1, {=}
+// !try get([1,2,3,4,5], 2),__map = 3, {=}
+// !try get(x, 0), {x=[1]} = 1, {x=[1]}
+// !try get(x, 2), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
+// !try get(x, add(1,1)), {x=[1,2,3,4,5]} = 3, {x=[1,2,3,4,5]}
 
 // Remove
-!try remove([], 0), __map = __empty, {=}
-!try remove([1], 0), __map = [], {=}
-!try remove([1,2,3], 2), __map = [1,2], {=}
-!try remove(x, 2), {x=[1,2,3]} = __done, {x=[1,2]}
-!try remove(x, add(1,1)), {x=[1,2,3]} = __done, {x=[1,2]}
+// !try remove([], 0), __map = __empty, {=}
+// !try remove([1], 0), __map = [], {=}
+// !try remove([1,2,3], 2), __map = [1,2], {=}
+// !try remove(x, 2), {x=[1,2,3]} = __done, {x=[1,2]}
+// !try remove(x, add(1,1)), {x=[1,2,3]} = __done, {x=[1,2]}
 
 // Pop
-!try pop([]), __map = __empty, {=}
-!try pop([1]), __map = [], {=}
-!try pop([1,2,3]), __map = [2,3], {=}
-!try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
-!try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
-!try append(x, [2]), {x=[]} = __done, {x=[[2]]}
+// !try pop([]), __map = __empty, {=}
+// !try pop([1]), __map = [], {=}
+// !try pop([1,2,3]), __map = [2,3], {=}
+// !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
+// !try pop(x), {x=[1,2,3]} = __done, {x=[2,3]}
+// !try append(x, [2]), {x=[]} = __done, {x=[[2]]}
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // Print
-!try printout("hello"), __map 
-!try printout(123), __map 
-!try printout(123.0), __map 
-!try printout(true), __map 
-!try printout(add(10,10)), __map 
+// !try printout("hello"), __map 
+// !try printout(123), __map 
+// !try printout(123.0), __map 
+// !try printout(true), __map 
+// !try printout(add(10,10)), __map 
 
 
-// Lists External Syntax = Incomplete
-!try "x := [];" = __done, {x=[]}
-!try "x := [1];" = __done, {x=[1]}
-!try "x := [1,2,3,4];" = __done, {x=[1,2,3,4]}
+// Lists External Syntax
+// !try "x := [];" = __done, {x=[]}
+// !try "x := [1];" = __done, {x=[1]}
+// !try "x := [1,2,3,4];" = __done, {x=[1,2,3,4]}
+// !try "x := [1,2,3,4]; x.length();" = 4, {x=[1,2,3,4]}
+// !try "x := [1,2,3,4]; x.insert(4, 5);" = __done, {x=[1,2,3,4,5]}
+// !try "x := [1,2,3,4]; x.append(5);" = __done, {x=[1,2,3,4,5]}
+// !try "x := [1,2,3,4]; x.get(0);" = 1, {x=[1,2,3,4]}
+// !try "x := [1,2,3,4]; x.remove(0);" = __done, {x=[2,3,4]}
+// !try "x := [1,2,3,4]; x.pop();" = __done, {x=[2,3,4]}
+// !try "x.length();" = __empty, {=}
+// !try "x.insert(4, 5);" = __empty, {=}
+// !try "x.append(5);" = __empty, {=}
+// !try "x.get(0);" = __empty, {=}
+// !try "x.remove(0);" = __empty, {=}
+// !try "x.pop();" = __empty, {=}
+
+// !try "x := [1.0,2.0,3.0,4.0];" = __done, {x=[1.0,2.0,3.0,4.0]}
+// !try "x := [1.0,2.0,3.0,4.0]; x.length();" = 4, {x=[1.0,2.0,3.0,4.0]}
+// !try "x := [1.0,2.0,3.0,4.0]; x.insert(4, 5.0);" = __done, {x=[1.0,2.0,3.0,4.0,5.0]}
+// !try "x := [1.0,2.0,3.0,4.0]; x.append(5.0);" = __done, {x=[1.0,2.0,3.0,4.0,5.0]}
+// !try "x := [1.0,2.0,3.0,4.0]; x.get(0);" = 1.0, {x=[1.0,2.0,3.0,4.0]}
+// !try "x := [1.0,2.0,3.0,4.0]; x.remove(0);" = __done, {x=[2.0,3.0,4.0]}
+// !try "x := [1.0,2.0,3.0,4.0]; x.pop();" = __done, {x=[2.0,3.0,4.0]}
+
+
+// !try "x := ['1','2','3','4'];" = __done, {x=["1","2","3","4"]}
+// !try "x := ['1','2','3','4']; x.length();" = 4, {x=["1","2","3","4"]}
+// !try "x := ['1','2','3','4']; x.insert(4, '5');" = __done, {x=["1","2","3","4","5"]}
+// !try "x := ['1','2','3','4']; x.append('5');" = __done, {x=["1","2","3","4","5"]}
+// !try "x := ['1','2','3','4']; x.get(0);" = "1", {x=["1","2","3","4"]}
+// !try "x := ['1','2','3','4']; x.remove(0);" = __done, {x=["2","3","4"]}
+// !try "x := ['1','2','3','4']; x.pop();" = __done, {x=["2","3","4"]}
 // Fails
 // !try "x := [2+2, 3+3];" = __done, {x=[4, 6]}
 

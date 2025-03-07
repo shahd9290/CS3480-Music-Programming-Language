@@ -1,5 +1,0 @@
-Complex Operators - i.e. ++, --
-Extend operations to floating point numbers
-Use booleans rather than integers for predicates.
-Switch Case Statements
-Procedural Calls
