@@ -79,13 +79,9 @@
 -leRd _L |> __real64(_) _R,_sig  -> _RP,_sigP         --- le(_L, _R),_sig  -> le(_L, _RP),_sigP 
 -leL _L,_sig  -> _LP,_sigP                            --- le(_L, _R),_sig  -> le(_LP, _R),_sigP 
 
--neg _N |> __int32(_) gt(_N,0),_sig -> true,_sig      --- neg(_N),_sig -> __neg(_N), _sig
--neg _N |> __real64(_) gt(_N,0),_sig -> true,_sig     --- neg(_N),_sig -> __neg(_N), _sig
+-neg _N |> __int32(_)                                 --- neg(_N),_sig -> __neg(_N), _sig
+-neg _N |> __real64(_)                                --- neg(_N),_sig -> __neg(_N), _sig
 -neg _N,_sig -> _NP, _sigP                            --- neg(_N),_sig -> neg(_NP), _sigP
-
--pos _N |> __int32(_) lt(_N,0),_sig -> true,_sig      --- pos(_N),_sig -> __neg(_N), _sig
--pos _N |> __real64(_) lt(_N,0),_sig -> true,_sig     --- pos(_N),_sig -> __neg(_N), _sig
--pos _N,_sig -> _NP, _sigP                            --- pos(_N),_sig -> pos(_NP), _sigP
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -260,7 +256,6 @@ e2 ::= e3^^ |
     e2 mod^^ e3 (*Mod *)
 
 e3 ::= e4^^ |
-    pos^^ e3 | (*Posite *)
     neg^^ e3 (*Negate *)
 
 e4 ::= e5^^ |
@@ -510,4 +505,3 @@ __l ::= operand | operand ','^ __l
 //!try "plugin('init'); plugin('play', 'B', 'A', 'D');"
 //!try "plugin('init'); play 'B', 'A', 'D';" 
 //!try "plugin('weird', 666); "
-
