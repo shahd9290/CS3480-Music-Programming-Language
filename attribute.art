@@ -3,8 +3,32 @@
 //!interpreter attributeAction
 !support
 !! import java.util.Map; import java.util.HashMap; !!
-!! Map<String, Object> variables = new HashMap<>(); 
-   Map<String, AbstractAttributeBlock> procedures = new HashMap<>(); !!
+!! 
+Map<String, Object> variables = new HashMap<>(); 
+Map<String, AbstractAttributeBlock> procedures = new HashMap<>(); 
+   
+Number apply(Number a, Number b, String op) {
+    boolean bothInts = a instanceof Integer && b instanceof Integer;
+    double x = a.doubleValue(), y = b.doubleValue();
+    int xi = a.intValue(), yi = b.intValue();
+
+    return switch (op) {
+        case "+"  -> bothInts ? xi + yi : x + y;
+        case "-"  -> bothInts ? xi - yi : x - y;
+        case "*"  -> bothInts ? xi * yi : x * y;
+        case "/"  -> bothInts ? xi / yi : x / y;
+        case "%"  -> bothInts ? xi % yi : x % y;
+        case "**" -> bothInts ? (int) Math.pow(xi, yi) : Math.pow(x, y);
+        case ">"  -> (xi > yi) ? 1 : 0;
+        case "<"  -> (xi < yi) ? 1 : 0;
+        case ">=" -> (xi >= yi) ? 1 : 0;
+        case "<=" -> (xi <= yi) ? 1 : 0;
+        case "==" -> (xi == yi) ? 1 : 0;
+        case "!=" -> (xi != yi) ? 1 : 0;
+        default   -> throw new RuntimeException("Unknown op " + op);
+    };
+}
+!!
 
 text ::= statements                                     !! System.out.println("Final variable map " + variables); !!
 statements ::= statement | statement statements
@@ -32,50 +56,61 @@ printElements ::=
 | e0 !! System.out.print(e01.v); !! 
 | e0 !! System.out.print(e01.v); !! ',' printElements  
 
-e0 <v:Object> ::=
-  e1                                                    !! e0.v = (int) e11.v; !! 
-| e1 '>'  e1                                            !! e0.v = (int) e11.v >  (int) e12.v ? 1 : 0; !!       // Greater than
-| e1 '<'  e1                                            !! e0.v = (int) e11.v <  (int) e12.v ? 1 : 0; !!       // Less than
-| e1 '>=' e1                                            !! e0.v = (int) e11.v >= (int) e12.v ? 1 : 0; !!       // Greater than or equals
-| e1 '<=' e1                                            !! e0.v = (int) e11.v <= (int) e12.v ? 1 : 0; !!       // Less than or equals
-| e1 '==' e1                                            !! e0.v = (int) e11.v == (int) e12.v ? 1 : 0; !!       // Equal to
-| e1 '!=' e1                                            !! e0.v = (int) e11.v != (int) e12.v ? 1 : 0; !!       // Not equal to
+e0 <v:Number> ::= 
+  e1                                    !! e0.v = e11.v; !!
+| e1 '>'  e1                            !! e0.v = apply(e11.v, e12.v, ">"); !!
+| e1 '<'  e1                            !! e0.v = apply(e11.v, e12.v, "<"); !!
+| e1 '>=' e1                            !! e0.v = apply(e11.v, e12.v, ">="); !!
+| e1 '<=' e1                            !! e0.v = apply(e11.v, e12.v, "<="); !!
+| e1 '==' e1                            !! e0.v = apply(e11.v, e12.v, "=="); !!
+| e1 '!=' e1                            !! e0.v = apply(e11.v, e12.v, "!="); !!
 
-e1 <v:Object>  ::= 
-  e2                                                    !! e1.v = (int) e21.v; !! 
-| e1 '+' e2                                             !! e1.v = (int) e11.v + (int) e21.v; !!                // Add 
-| e1 '-' e2                                             !! e1.v = (int) e11.v - (int) e21.v; !!                // Subtract
+e1 <v:Number> ::= 
+  e2                                   !! e1.v = e21.v; !!
+| e1 '+' e2                            !! e1.v = apply(e11.v, e21.v, "+"); !!
+| e1 '-' e2                            !! e1.v = apply(e11.v, e21.v, "-"); !!
 
-e2  <v:Object> ::= 
-  e3                                                    !! e2.v = (int) e31.v; !! 
-| e2 '*' e3                                             !! e2.v = (int) e21.v * (int) e31.v; !!                // Multiply 
-| e2 '/' e3                                             !! e2.v = (int) e21.v / (int) e31.v; !!                // Divide 
-| e2 '%' e3                                             !! e2.v = (int) e21.v % (int) e31.v; !!                // Mod 
+e2 <v:Number> ::= 
+  e3                                   !! e2.v = e31.v; !!
+| e2 '*' e3                            !! e2.v = apply(e21.v, e31.v, "*"); !!
+| e2 '/' e3                            !! e2.v = apply(e21.v, e31.v, "/"); !!
+| e2 '%' e3                            !! e2.v = apply(e21.v, e31.v, "%"); !!
 
-e3  <v:Object> ::= 
-  e4                                                    !! e3.v = (int) e41.v; !!
-| '+' e3                                                !! e3.v = (int) e31.v; !!                         // Posite 
-| '-' e3                                                !! e3.v = - (int) e31.v; !!                        // Negate 
+e3 <v:Number> ::= 
+  e4                                   !! e3.v = e41.v; !!
+| '+' e3                               !! e3.v = e31.v; !!              
+| '-' e3                               !! e3.v = apply(0, e31.v, "-"); !!
 
-e4  <v:Object> ::= 
-  e5                                                    !! e4.v = (int) e51.v; !! 
-| e5 '**' e4                                            !! e4.v = (int) Math.pow((int) e51.v, (int) e41.v); !! // Exponentiate
+e4 <v:Number> ::= 
+  e5                                   !! e4.v = e51.v; !!
+| e5 '**' e4                           !! e4.v = apply(e51.v, e41.v, "**"); !!
 
-e5  <v:Object> ::= 
-  INTEGER                                               !! e5.v = INTEGER1.v; !!                       // Integer literal
-| REAL                                                  !! e5.v = REAL1.v; !!                       // Integer literal
-| ID                                                    !! Object obj = variables.get(ID1.v); if (obj instanceof Integer i) {e5.v = i;} else if (obj instanceof Double d) {e5.v = d;}  !!       // Variable access 
-| '(' e1                                                !! e5.v = e11.v; !! ')'                        // Parenthesised expression 
-| 'plugin' '(' STRING_SQ ',' e0 ')'                     !! e5.v = (int) plugin(STRING_SQ1.v, e01.v); !!
+e5 <v:Number> ::= 
+  INTEGER                              !! e5.v = INTEGER1.v; !!
+| REAL                                 !! e5.v = REAL1.v; !!
+| ID                                   !! Object obj = variables.get(ID1.v);
+                                          if (obj instanceof Number n) e5.v = n;
+                                          else throw new RuntimeException("Variable " + ID1.v + " is not numeric");
+                                       !!
+| '(' e1 ')'                           !! e5.v = e11.v; !!
+| 'plugin' '(' STRING_SQ ',' e0 ')'    !! e5.v = (Number) plugin(STRING_SQ1.v, e01.v); !!
 
 // Lexical rules
-ID <v:String>        ::= &ID                            !! ID.v = lexeme(); !!  
-STRING_SQ <v:String> ::= &STRING_SQ                     !! STRING_SQ.v = lexemeCore().translateEscapes(); !!
-INTEGER <v:int>      ::= &INTEGER                       !! INTEGER.v = Integer.parseInt(lexeme()); !!
-REAL <v:double>      ::= &REAL                          !! REAL.v = Double.parseDouble(lexeme()); !!
+ID <v:String>        ::= &ID           !! ID.v = lexeme(); !!  
+STRING_SQ <v:String> ::= &STRING_SQ    !! STRING_SQ.v = lexemeCore().translateEscapes(); !!
+INTEGER <v:int>      ::= &INTEGER      !! INTEGER.v = Integer.parseInt(lexeme()); !!
+REAL <v:double>      ::= &REAL         !! REAL.v = Double.parseDouble(lexeme()); !!
 //!generate actions 
 !try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a; gcd := a; plugin('init'); plugin('ding');"
 !try "a := 2; b := 5;"
+!try "x := a + b;"
+!try "x := a - b;"
+!try "x := a * b;"
+!try "x := a / b;"
+!try "x := a % b;"
+!try "x := a ** b;"
+
+!try "a := 2.5; b := 5.5;"
 !try "x := a + b;"
 !try "x := a - b;"
 !try "x := a * b;"
