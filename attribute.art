@@ -46,15 +46,9 @@ statement ::=
 | 'procedure' ID statement!<                            !! procedures.put(ID1.v, statement1); !!
 | 'call' ID ';'                                         !! interpret(procedures.get(ID1.v)); !! 
 | '{' statements '}'                                    (* compound statement *)
-| prepost';'
+| e7';'
 
 elseOpt ::= 'else' statement | #     
-
-prepost ::= 
-  '++'ID                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {variables.put(ID1.v, i + 1); prepost.v = i+1;}} !!
-| '--'ID                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {variables.put(ID1.v, i - 1); prepost.v = i-1;}} !!
-| ID'++'                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {prepost.v = i; variables.put(ID1.v, i + 1);} }  !!
-| ID'--'                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {prepost.v = i; variables.put(ID1.v, i - 1);} }  !!
 
 printElements ::= 
   STRING_SQ                                             !! System.out.print(STRING_SQ1.v); !! 
@@ -111,8 +105,16 @@ e6 <v:int> ::=
 | e7 '||' e7                                            !! e6.v = e71.v==1 || e72.v==1 ? 1 : 0; !!
 | '!'e7                                                 !! e6.v = !(e71.v!=1) ? 1 : 0; !!
 
-e7 <v:int> ::=
-  BOOLEAN                                               !! e7.v = BOOLEAN1.v; !!
+e7<v:int> ::= 
+  e8                                                    !! e7.v = e81.v; !!
+| '++'ID                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {variables.put(ID1.v, i + 1); e7.v = i+1;}} !!
+| '--'ID                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {variables.put(ID1.v, i - 1); e7.v = i-1;}} !!
+| ID'++'                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {e7.v = i; variables.put(ID1.v, i + 1);} }  !!
+| ID'--'                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {e7.v = i; variables.put(ID1.v, i - 1);} }  !!
+
+
+e8 <v:int> ::=
+  BOOLEAN                                               !! e8.v = BOOLEAN1.v; !!
 // Lexical rules
 ID <v:String>        ::= &ID                            !! ID.v = lexeme(); !!  
 STRING_SQ <v:String> ::= &STRING_SQ                     !! STRING_SQ.v = lexemeCore().translateEscapes(); !!
@@ -172,8 +174,8 @@ BOOLEAN <v:int>  ::= 'true' !! BOOLEAN.v = 1;           !! | 'false' !! BOOLEAN.
 // }
 // "
 
-!try "x := 1; ++x;"
-!try "x := 1; --x;"
-!try "x := 1; x++;"
-!try "x := 1; x--;"
+!try "x := 1; y:= ++x;"
+!try "x := 1; y:= --x;"
+!try "x := 1; y:= x++;"
+!try "x := 1; y:= x--;"
 
