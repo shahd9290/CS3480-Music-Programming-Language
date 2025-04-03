@@ -45,10 +45,16 @@ statement ::=
 | 'println' '(' printElementsLn ')' ';'                    (* print statement *)
 | 'procedure' ID statement!<                            !! procedures.put(ID1.v, statement1); !!
 | 'call' ID ';'                                         !! interpret(procedures.get(ID1.v)); !! 
-
 | '{' statements '}'                                    (* compound statement *)
+| prepost';'
 
 elseOpt ::= 'else' statement | #     
+
+prepost ::= 
+  '++'ID                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {variables.put(ID1.v, i + 1); prepost.v = i+1;}} !!
+| '--'ID                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {variables.put(ID1.v, i - 1); prepost.v = i-1;}} !!
+| ID'++'                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {prepost.v = i; variables.put(ID1.v, i + 1);} }  !!
+| ID'--'                                                !! {Number num = (Number) variables.get(ID1.v); if (num instanceof Integer i) {prepost.v = i; variables.put(ID1.v, i - 1);} }  !!
 
 printElements ::= 
   STRING_SQ                                             !! System.out.print(STRING_SQ1.v); !! 
@@ -115,54 +121,59 @@ REAL <v:double>      ::= &REAL                          !! REAL.v = Double.parse
 BOOLEAN <v:int>  ::= 'true' !! BOOLEAN.v = 1;           !! | 'false' !! BOOLEAN.v = 0; !!
 //!generate actions 
 // !try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a; gcd := a; plugin('init'); plugin('ding');"
-!try "a := 2; b := 5;"
-!try "x := a + b;"
-!try "x := a - b;"
-!try "x := a * b;"
-!try "x := a / b;"
-!try "x := a % b;"
-!try "x := a ** b;"
+// !try "a := 2; b := 5;"
+// !try "x := a + b;"
+// !try "x := a - b;"
+// !try "x := a * b;"
+// !try "x := a / b;"
+// !try "x := a % b;"
+// !try "x := a ** b;"
 
-!try "a := 2.5; b := 5.5;"
-!try "x := a + b;"
-!try "x := a - b;"
-!try "x := a * b;"
-!try "x := a / b;"
-!try "x := a % b;"
-!try "x := a ** b;"
+// !try "a := 2.5; b := 5.5;"
+// !try "x := a + b;"
+// !try "x := a - b;"
+// !try "x := a * b;"
+// !try "x := a / b;"
+// !try "x := a % b;"
+// !try "x := a ** b;"
 
-!try "print('Result: ', (3+4)*2, '\n');"
-!try "x := 3;"
+// !try "print('Result: ', (3+4)*2, '\n');"
+// !try "x := 3;"
 
-!try "
-procedure sub {
-  print('Hello from a procedure\n'); 
-}
+// !try "
+// procedure sub {
+//   print('Hello from a procedure\n'); 
+// }
 
 
-x := 3;
-while x > 0 do { 
-  print('x is ', x, '\n'); 
-  x := x -1; 
-}
+// x := 3;
+// while x > 0 do { 
+//   print('x is ', x, '\n'); 
+//   x := x -1; 
+// }
 
-call sub;
-"
+// call sub;
+// "
 
-!try "d:= true;"
-!try "d:= false;"
-!try "d:= !true;"
-!try "d:= !false;"
-!try "d:= true && false;"
-!try "d:= true || false;"
-!try "
-if 1 then print('hello\n');
-if true then print('hello\n');
-d:= true;
-while d do {
-  print('Inside While Loop!\n');
-  println('Also Inside While Loop!');
-  d := false;
-}
-"
+// !try "d:= true;"
+// !try "d:= false;"
+// !try "d:= !true;"
+// !try "d:= !false;"
+// !try "d:= true && false;"
+// !try "d:= true || false;"
+// !try "
+// if 1 then print('hello\n');
+// if true then print('hello\n');
+// d:= true;
+// while d do {
+//   print('Inside While Loop!\n');
+//   println('Also Inside While Loop!');
+//   d := false;
+// }
+// "
+
+!try "x := 1; ++x;"
+!try "x := 1; --x;"
+!try "x := 1; x++;"
+!try "x := 1; x--;"
 
