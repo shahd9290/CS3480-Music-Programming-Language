@@ -8,8 +8,13 @@
   Map<String, AbstractAttributeBlock> procedures = new HashMap<>(); 
     
   Object apply(Object a, Object b, String op) {
-    if (op.equals("+") && (a instanceof String || b instanceof String)) {
-        return String.valueOf(a) + String.valueOf(b);
+    if (a instanceof String sa && b instanceof String sb) {
+        return switch (op) {
+          case "+" -> sa + sb;
+          case "==" -> sa.equals(sb) ? 1 : 0;
+          case "!=" -> sa.equals(sb) ? 0 : 1;
+          default   -> throw new RuntimeException("Unknown op " + op);
+        };
     }
     
     if (a instanceof Number na && b instanceof Number nb) {
@@ -196,4 +201,19 @@ BOOLEAN <v:int>  ::= 'true' !! BOOLEAN.v = 1;           !! | 'false' !! BOOLEAN.
 x:='hello'; 
 println(x);
 println(x+x);
+y:=x;
+
+if x == y then {
+  println('match!');
+}
+else {
+  println('do not match!');
+}
+
+if x != y then {
+  println('match!');
+}
+else {
+  println('do not match!');
+}
 "
