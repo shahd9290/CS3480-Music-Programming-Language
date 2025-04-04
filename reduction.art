@@ -210,7 +210,7 @@
 (*  CFG rules *)
 seq ::= statement^^ | statement seq 
 statement ::= assign^^ | while^^ | for^^ | if^^ | plugin^^ ';'^ | play^^ ';'^ | expression^^ ';'^ | prepost^^ ';'^ | lists^^ ';'^
-assign ::= &ID ':='^ expression ';'^ | &ID ':='^ __list ';'^
+assign ::= &ID ':='^ expression ';'^
 while ::= 'while'^ expression 'do'^ statement
 for ::= 'for'^ '('^ assign expression ';'^ prepost ')'^ 'do'^ statement
 if ::= 'if'^ expression 'then'^ statement | 'if'^ expression 'then'^ statement 'else'^ statement | 'if'^ expression 'then'^ statement 'otherwise if'^ expression 'then'^ statement 'else'^ statement
