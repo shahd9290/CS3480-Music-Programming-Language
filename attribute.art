@@ -181,7 +181,14 @@ REAL <v:double>      ::= &REAL                          !! REAL.v = Double.parse
 BOOLEAN <v:int>      ::= 
   'true'                                                !! BOOLEAN.v = 1; !! 
 | 'false'                                               !! BOOLEAN.v = 0; !!
-LIST <v:ArrayList>   ::= '[]'                           !! LIST.v = new ArrayList<Object>(); !!     
+LIST <v:ArrayList>   ::= 
+  '['']'                                                !! LIST.v = new ArrayList<Object>(); !!
+| '[' listElements ']'                                  !! LIST.v = listElements1.v; !!
+
+listElements <v:ArrayList> ::=
+  e0                                                    !! listElements.v = new ArrayList<Object>(); listElements.v.add(e01.v); !!
+| e0 ',' listElements                                   !! listElements.v = listElements1.v; listElements.v.add(0, e01.v); !!  
+
 //!generate actions 
 // !try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a; gcd := a; plugin('init'); plugin('ding');"
 // !try "a := 2; b := 5; x := a + b;"
@@ -276,18 +283,23 @@ LIST <v:ArrayList>   ::= '[]'                           !! LIST.v = new ArrayLis
 //   }
 // "
 
-!try "
-  x := [];
-  for(i:=0; i < 5; i++) do {
-    x.insert(0, i);
-  }
-  x.remove(3);
-"
+// !try "
+//   x := [];
+//   for(i:=0; i < 5; i++) do {
+//     x.insert(0, i);
+//   }
+//   x.remove(3);
+// "
+
+// !try "
+//   x := [];
+//   for(i:=0; i < 5; i++) do {
+//     x.insert(0, i);
+//   }
+//   x.pop(3);
+// "
 
 !try "
-  x := [];
-  for(i:=0; i < 5; i++) do {
-    x.insert(0, i);
-  }
-  x.pop(3);
+  x := [1,2,3];
+  x.remove(2);
 "
