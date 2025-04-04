@@ -165,13 +165,13 @@ e7 <v:int> ::=
 e8 <v:int> ::=
   BOOLEAN                                               !! e8.v = BOOLEAN1.v; !!
 
-lists ::=
+lists <v:Object> ::=
   ID'.length()'                                         !! {ArrayList<Object> l = checkList(ID1.v); lists.v = l.size();} !!
 | ID'.insert('INTEGER ',' e0 ')'                        !! {ArrayList<Object> l = checkList(ID1.v); l.add(INTEGER1.v, e01.v);} !!
-  // ID'.append()'                                         !! System.out.println("Not just yet!") !!
-  // ID'.get()'                                            !! System.out.println("Not just yet!") !!
-  // ID'.remove()'                                         !! System.out.println("Not just yet!") !!
-  // ID'.pop()'                                            !! System.out.println("Not just yet!") !!
+| ID'.append('e0')'                                     !! {ArrayList<Object> l = checkList(ID1.v); l.add(l.size(), e01.v);} !!
+| ID'.get('INTEGER')'                                   !! {ArrayList<Object> l = checkList(ID1.v); lists.v = l.get(INTEGER1.v);} !!
+| ID'.remove(' e0 ')'                                   !! {ArrayList<Object> l = checkList(ID1.v); lists.v = l.remove((Object) e01.v);} !!
+| ID'.pop(' INTEGER ')'                                 !! {ArrayList<Object> l = checkList(ID1.v); lists.v = l.remove(INTEGER1.v);} !!
 
 // Lexical rules
 ID <v:String>        ::= &ID                            !! ID.v = lexeme(); !!  
@@ -260,10 +260,34 @@ LIST <v:ArrayList>   ::= '[]'                           !! LIST.v = new ArrayLis
 //   }
 // "
 
+// !try "
+//   x := [];
+//   println(x.length());
+//   for(i:=0; i < 5; i++) do {
+//     x.insert(0, i);
+//   }
+//   println(x.length());
+// "
+
+// !try "
+//   y := [];
+//   for(i:=0; i < 5; i++) do {
+//     y.append(i);
+//   }
+// "
+
 !try "
   x := [];
-  println(x.length());
   for(i:=0; i < 5; i++) do {
     x.insert(0, i);
   }
+  x.remove(3);
+"
+
+!try "
+  x := [];
+  for(i:=0; i < 5; i++) do {
+    x.insert(0, i);
+  }
+  x.pop(3);
 "
