@@ -320,6 +320,25 @@ lists <v:Object> ::=
 //   play('B', 'A', 'D');
 // "
 
-!try "x:=5;
- x < 10 ? println('true') : println('false');
+// !try "x:=5;
+//  x < 10 ? println('true') : println('false');
+// "
+
+!try "x := 15;
+
+if x < 5 then {
+  println('a');
+}
+else if x < 10 then {
+  println('b');
+}
+else if x < 15 then {
+  println('c');
+}
+else if x < 20 then {
+  println('d');
+}
+else {
+  println('e')
+}
 "
