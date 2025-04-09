@@ -3,7 +3,16 @@
 !! 
   interface lambdaInterface {
     void run(Object... args);
-}
+  }
+  class Case {
+    Object match;
+    AbstractAttributeBlock body;
+
+    Case(Object match, AbstractAttributeBlock body) {
+      this.match = match;
+      this.body = body;
+    }
+  }
 
   int successCount = 0;
   int failCount = 0;
@@ -81,7 +90,7 @@ text ::= statements                                     !! System.out.println("F
 
 asserting ::= 'ASSERT' '(' assignees ',' assignees ')'  !! interpret(assignees1);
                                                            interpret(assignees2);
-                                                           if (assignees2.v.toString().equals(assignees2.v.toString())) {
+                                                           if (assignees1.v.toString().equals(assignees2.v.toString())) {
                                                                System.out.println("Successful test: got value " + assignees1.v);
                                                                successCount++;
                                                            } else {
@@ -95,10 +104,6 @@ statements ::= statement | statement statements
 statement ::= 
   assign
 | asserting
-| 'if' e0 'then' statement!< elseOpt!<                  !! if ((int) e01.v != 0) interpret(statement1); else interpret(elseOpt1); !!
-| e0 '?' methods!< ':' methods!<';'                     !! if ((int) e01.v != 0) interpret(methods1); else interpret(methods2); !! 
-| 'while' e0!< 'do' statement!<                         !! interpret(e01); while ((int) e01.v != 0) { interpret(statement1); interpret(e01); } !! 
-| 'for' '(' assign e0 ';' e7!< ')' 'do' statement!<     !! interpret(assign1); interpret(e01); while ((int) e01.v != 0) {interpret(statement1); interpret(e71);interpret(e01);} !!
 | '{' statements '}'           
 | methods';'
 | functions
@@ -106,6 +111,40 @@ statement ::=
 | trycatch
 | LINE_COMMENT
 | BLOCK_COMMENT
+| branchLoops
+| e0 '?' methods!< ':' methods!<';'                     !! if ((int) e01.v != 0) interpret(methods1); else interpret(methods2); !! 
+
+
+branchLoops ::=
+  'if' e0 'then' statement!< elseOpt!<                  !! if ((int) e01.v != 0) interpret(statement1); else interpret(elseOpt1); !!
+| 'while' e0!< 'do' statement!<                         !! interpret(e01); while ((int) e01.v != 0) { interpret(statement1); interpret(e01); } !! 
+| 'for' '(' assign e0 ';' e7!< ')' 'do' statement!<     !! interpret(assign1); interpret(e01); while ((int) e01.v != 0) {interpret(statement1); interpret(e71);interpret(e01);} !!
+| 'switch' assignees '{' cases defaultOpt '}'           !! Object val = assignees1.v;
+                                                           boolean matched = false;
+
+                                                           ArrayList<Case> caseList = (ArrayList<Case>) cases1.v;
+                                                           for (Case c : caseList) {
+                                                             if (val.equals(c.match)) {
+                                                               interpret(c.body);
+                                                               matched = true;
+                                                               break;
+                                                             }
+                                                           }
+
+                                                           if (!matched && defaultOpt1 != null) {
+                                                             interpret(defaultOpt1.v);
+                                                           }
+                                                        !!
+
+cases <v:ArrayList> ::= caseEntry cases                     !! cases.v = cases1.v; cases.v.add(0, caseEntry1.v); !!
+                      | caseEntry                           !! cases.v = new ArrayList<>(); cases.v.add(caseEntry1.v); !!
+
+caseEntry <v:Case> ::= 'case' assignees ':' statement!<     !! caseEntry.v = new Case(assignees1.v, statement1); !!
+
+defaultOpt <v:AbstractAttributeBlock> ::= 
+  'default' ':' statement!<                              !! defaultOpt.v = statement1; !!
+| #
+
 
 trycatch ::=
   'try' '{' statements!< '}' 
@@ -265,7 +304,7 @@ e6 <v:int> ::=
   e7                                                    !! e6.v = e71.v; !!
 | e7 '&&' e7                                            !! e6.v = e71.v==1 && e72.v==1 ? 1 : 0; !!
 | e7 '||' e7                                            !! e6.v = e71.v==1 || e72.v==1 ? 1 : 0; !!
-| '!'e7                                                 !! e6.v = !(e71.v!=1) ? 1 : 0; !!
+| '!'e7                                                 !! e6.v = (e71.v!=1) ? 1 : 0; !!
 
 e7 <v:int> ::= 
   e8                                                    !! e7.v = e81.v; !!
