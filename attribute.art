@@ -121,26 +121,41 @@ argList <v:ArrayList> ::=
 | e0 ',' argList                                        !! argList.v = argList1.v; argList.v.add(0, e01.v); !!
 | #
 
-functions ::=
+functions <v:Object> ::=
   'procedure' ID statement!<                             !! procedures.put(ID1.v, statement1); !!
 | 'function' ID '()' '{' funcstmt!<'}'                   !! procedures.put(ID1.v, funcstmt1);  !!
+| 'function' ID '(' idList ')' '{' funcstmt!<'}'           !!  ArrayList<String> names = idList1.v;
+                                                            lambdaInterface fn = new lambdaInterface() {
+                                                              public void run(Object... args) {
+                                                                for (int i = 0; i < names.size(); i++) {
+                                                                  variables.put(names.get(i), args[i]);
+                                                                }
+                                                                interpret(funcstmt1);
 
-
+                                                              }
+                                                            };
+                                                            variables.put(ID1.v, fn); 
+                                                         !!
 returnstmt ::= 'return' e0 ';'                           !! funcReturns.put("__returned", e01.v); !!
 
 funcCall <v:Object> ::=
-   ID '()'                                               !! if (variables.get(ID1.v) instanceof lambdaInterface l) {
+   ID '()'                                               !! funcReturns.remove("__returned");
+                                                            if (variables.get(ID1.v) instanceof lambdaInterface l) {
                                                               l.run();
                                                             } 
                                                             else {
-                                                              funcReturns.remove("__returned");
                                                               interpret(procedures.get(ID1.v));
-                                                              funcCall.v = funcReturns.get("__returned");
                                                             }
+                                                            funcCall.v = funcReturns.get("__returned");
                                                          !!
-|  ID '(' argList ')'                                    !! if (variables.get(ID1.v) instanceof lambdaInterface l) {
+|  ID '(' argList ')'                                    !! funcReturns.remove("__returned");
+                                                            if (variables.get(ID1.v) instanceof lambdaInterface l) {
                                                               l.run(argList1.v.toArray());
                                                             } 
+                                                            else {
+                                                              interpret(procedures.get(ID1.v));
+                                                            }
+                                                            funcCall.v = funcReturns.get("__returned");
                                                          !!
 
 funcstmt ::= statements returnstmt | returnstmt

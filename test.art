@@ -177,68 +177,74 @@
 //     println(x);
 // "
 
-// !try "
-//     x := () -> { 
-//         println('hello');
-//         a := 5;
-//         println(a + 2); 
-//     };
-//     x();
-// "
+!try "
+    x := () -> { 
+        println('hello');
+        a := 5;
+        println(a + 2); 
+    };
+    x();
+"
 
-// !try "
-// a := 5;
-// b := 10;
-// c := 15;
+!try "
+a := 5;
+b := 10;
+c := 15;
 
-// y := (p) -> {println(p);};
-// y(a);
+y := (p) -> {println(p);};
+y(a);
 
-// y := (p, q, r) -> {
-//     println(p + q + r);
+y := (p, q, r) -> {
+    println(p + q + r);
     
-// };
-// y(a, b, c);
-// "
-
-// !try "
-
-// x := 5;
-
-// // x:= 10;
-
-// /* BLOCK
-
-// COMMENT
-
-// HERE
-
-// */
-
-// println(x);
-
-// "
+};
+y(a, b, c);
+"
 
 !try "
 
-function foo () {
+x := 5;
+
+// x:= 10;
+
+/* BLOCK
+
+COMMENT
+
+HERE
+
+*/
+
+println(x);
+
+"
+
+!try "
+
+function doo () {
     x := 20;
     return x;
 }
 
-function bar () {
+function re () {
     return 10;
 }
 
-// function mee (a) {
-//     return a + 10;
-// }
+function me (a) {
+    return a + 10;
+}
 
-a := foo();
-b := bar();
-// c := mee(20);
+function fa (a, b, c, d, e) {
+    return a + b + c + d + e;
+}
+
+a := doo();
+b := re();
+c := me(20);
+d := fa(1, 2, 3, 4, 5);
 
 println(a);
 println(b);
-// println(c);
+println(c);
+println(d);
 "
