@@ -5,6 +5,8 @@
     void run(Object... args);
 }
 
+  int successCount = 0;
+  int failCount = 0;
 
   Map<String, Object> variables = new HashMap<>(); 
   Map<String, AbstractAttributeBlock> procedures = new HashMap<>();
@@ -73,13 +75,28 @@
 
 !!
 
-text ::= statements                                     !! System.out.println("Final variable map " + variables); clear();!!
+
+
+text ::= statements                                     !! System.out.println("Final variable map " + variables); System.out.println(String.format("Successful Tests: %d\nFailed Tests: %d\n", successCount, failCount));; clear();!!
+
+asserting ::= 'ASSERT' '(' assignees ',' assignees ')'  !! interpret(assignees1);
+                                                           interpret(assignees2);
+                                                           if (assignees2.v.toString().equals(assignees2.v.toString())) {
+                                                               System.out.println("Successful test: got value " + assignees1.v);
+                                                               successCount++;
+                                                           } else {
+                                                               System.out.println("Test failed: expected " + assignees2.v + " but got " + assignees1.v);
+                                                               failCount++;
+                                                           }
+                                                        !!
+
 statements ::= statement | statement statements
 
 statement ::= 
   assign
+| asserting
 | 'if' e0 'then' statement!< elseOpt!<                  !! if ((int) e01.v != 0) interpret(statement1); else interpret(elseOpt1); !!
-| e0 '?' methods!< ':' methods!<';'                 !! if ((int) e01.v != 0) interpret(methods1); else interpret(methods2); !! 
+| e0 '?' methods!< ':' methods!<';'                     !! if ((int) e01.v != 0) interpret(methods1); else interpret(methods2); !! 
 | 'while' e0!< 'do' statement!<                         !! interpret(e01); while ((int) e01.v != 0) { interpret(statement1); interpret(e01); } !! 
 | 'for' '(' assign e0 ';' e7!< ')' 'do' statement!<     !! interpret(assign1); interpret(e01); while ((int) e01.v != 0) {interpret(statement1); interpret(e71);interpret(e01);} !!
 | '{' statements '}'           
@@ -114,17 +131,15 @@ lambdas <v:lambdaInterface> ::=
 idList <v:ArrayList> ::= 
   ID                                                    !! idList.v = new ArrayList<>(); idList.v.add(ID1.v); !!
 | ID ',' idList                                         !! idList.v = idList1.v; idList.v.add(0, ID1.v); !!
-| #
 
 argList <v:ArrayList> ::= 
   e0                                                    !! argList.v = new ArrayList<>(); argList.v.add(e01.v); !!
 | e0 ',' argList                                        !! argList.v = argList1.v; argList.v.add(0, e01.v); !!
-| #
 
 functions <v:Object> ::=
   'procedure' ID statement!<                             !! procedures.put(ID1.v, statement1); !!
 | 'function' ID '()' '{' funcstmt!<'}'                   !! procedures.put(ID1.v, funcstmt1);  !!
-| 'function' ID '(' idList ')' '{' funcstmt!<'}'           !!  ArrayList<String> names = idList1.v;
+| 'function' ID '(' idList ')' '{' funcstmt!<'}'         !!  ArrayList<String> names = idList1.v;
                                                             lambdaInterface fn = new lambdaInterface() {
                                                               public void run(Object... args) {
                                                                 for (int i = 0; i < names.size(); i++) {
