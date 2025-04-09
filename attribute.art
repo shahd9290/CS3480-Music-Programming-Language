@@ -1,8 +1,9 @@
 !support
-!! import java.util.Map; import java.util.HashMap; import java.util.ArrayList; import java.util.List; !!
+!! import java.util.Map; import java.util.HashMap; import java.util.ArrayList; import java.util.List; import java.util.Scanner; !!
 !! 
   Map<String, Object> variables = new HashMap<>(); 
   Map<String, AbstractAttributeBlock> procedures = new HashMap<>(); 
+  Scanner scanner = new Scanner(System.in);
 
   void clear() {
     variables.clear();
@@ -98,12 +99,18 @@ functions ::= // Things that need the ; after if called individually, but not in
 | e7
 | lists
 | playElements
+| userIn
 
 elseOpt ::= 'else' statement | #     
 assign ::= 
   ID ':=' e0 ';'                                        !! variables.put(ID1.v, e01.v); !!     // assignment 
 | ID ':=' STRING_SQ ';'                                 !! variables.put(ID1.v, STRING_SQ1.v); !!
 | ID ':=' LIST ';'                                      !! variables.put(ID1.v, LIST1.v); !!
+| ID ':=' userIn ';'                                    !! variables.put(ID1.v, userIn1.v); !!
+
+userIn <v:String> ::=
+  'input' '(' STRING_SQ ')'                             !! System.out.print(STRING_SQ1.v + " "); userIn.v = scanner.nextLine(); !!
+
 
 printElements ::= 
   STRING_SQ                                             !! System.out.print(STRING_SQ1.v); !! 

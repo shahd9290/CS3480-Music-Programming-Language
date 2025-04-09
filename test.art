@@ -1,173 +1,178 @@
-!try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a; gcd := a; plugin('init'); plugin('ding');"
-!try "a := 2; b := 5; x := a + b;"
-!try "a := 2; b := 5; x := a - b;"
-!try "a := 2; b := 5; x := a * b;"
-!try "a := 2; b := 5; x := a / b;"
-!try "a := 2; b := 5; x := a % b;"
-!try "a := 2; b := 5; x := a ** b;"
+// !try "a := 6; b := 9; while a != b do if a > b then a := a - b; else b := b - a; gcd := a; plugin('init'); plugin('ding');"
+// !try "a := 2; b := 5; x := a + b;"
+// !try "a := 2; b := 5; x := a - b;"
+// !try "a := 2; b := 5; x := a * b;"
+// !try "a := 2; b := 5; x := a / b;"
+// !try "a := 2; b := 5; x := a % b;"
+// !try "a := 2; b := 5; x := a ** b;"
 
-!try "a := 2.5; b := 5.5; x := a + b;"
-!try "a := 2.5; b := 5.5; x := a - b;"
-!try "a := 2.5; b := 5.5; x := a * b;"
-!try "a := 2.5; b := 5.5; x := a / b;"
-!try "a := 2.5; b := 5.5; x := a % b;"
-!try "a := 2.5; b := 5.5; x := a ** b;"
+// !try "a := 2.5; b := 5.5; x := a + b;"
+// !try "a := 2.5; b := 5.5; x := a - b;"
+// !try "a := 2.5; b := 5.5; x := a * b;"
+// !try "a := 2.5; b := 5.5; x := a / b;"
+// !try "a := 2.5; b := 5.5; x := a % b;"
+// !try "a := 2.5; b := 5.5; x := a ** b;"
 
-!try "print('Result: ', (3+4)*2, '\n');"
+// !try "print('Result: ', (3+4)*2, '\n');"
+
+// !try "
+//   procedure sub {
+//     print('Hello from a procedure\n'); 
+//   }
+
+
+//   x := 3;
+//   while x > 0 do { 
+//     print('x is ', x, '\n'); 
+//     x := x -1; 
+//   }
+
+//   call sub;
+// "
+
+// !try "d:= true;"
+// !try "d:= false;"
+// !try "d:= !true;"
+// !try "d:= !false;"
+// !try "d:= true && false;"
+// !try "d:= true || false;"
+// !try "
+//   if 1 then print('hello\n');
+//   if true then print('hello\n');
+//   d:= true;
+//   while d do {
+//     print('Inside While Loop!\n');
+//     println('Also Inside While Loop!');
+//     d := false;
+//   }
+// "
+
+// !try "x := 1; y:= ++x;"
+// !try "x := 1; y:= --x;"
+// !try "x := 1; y:= x++;"
+// !try "x := 1; y:= x--;"
+
+// !try "for(x:=0; x < 2; x++) do {println('hello'); println(x);}"
+
+// !try "
+//   x:='hello'; 
+//   println(x);
+//   println(x+x);
+//   y:=x;
+
+//   if x == y then {
+//     println('match!');
+//   }
+//   else {
+//     println('do not match!');
+//   }
+
+//   if x != y then {
+//     println('match!');
+//   }
+//   else {
+//     println('do not match!');
+//   }
+// "
+
+// !try "
+//   x := [];
+//   println(x.length());
+//   for(i:=0; i < 5; i++) do {
+//     x.insert(0, i);
+//   }
+//   println(x.length());
+// "
+
+// !try "
+//   y := [];
+//   for(i:=0; i < 5; i++) do {
+//     y.append(i);
+//   }
+// "
+
+// !try "
+//   x := [];
+//   for(i:=0; i < 5; i++) do {
+//     x.insert(0, i);
+//   }
+//   x.remove(3);
+// "
+
+// !try "
+//   x := [];
+//   for(i:=0; i < 5; i++) do {
+//     x.insert(0, i);
+//   }
+//   x.pop(3);
+// "
+
+// !try "
+//   x := [1,2,3];
+//   x.remove(2);
+// "
+
+// !try "
+//   play('B');
+//   play('B', 'A');
+//   play('B', 'A', 'D');
+// "
+
+// !try "x:=5;
+//  x < 10 ? println('true') : println('false');
+// "
+
+// !try "x := 15;
+
+// if x < 5 then {
+//   println('a');
+// }
+// else if x < 10 then {
+//   println('b');
+// }
+// else if x < 15 then {
+//   println('c');
+// }
+// else if x < 20 then {
+//   println('d');
+// }
+// else {
+//   println('e');
+// }
+// "
+
+// !try "
+//   try {
+//     x := 5;
+//     y := 'hello';
+
+//     z := x + y;
+//   }
+//   catch {
+//     println('an error occurred');
+//   }
+//   finally {
+//     println('the end!');
+//   }
+// "
+
+// !try "
+//   try {
+//     x := 5;
+//     y := 10;
+
+//     z := x + y;
+//     println(z);
+//   }
+//   catch {
+//     println('an error occurred');
+//   }
+//   finally {
+//     println('the end!');
+//   }
+// "
 
 !try "
-  procedure sub {
-    print('Hello from a procedure\n'); 
-  }
-
-
-  x := 3;
-  while x > 0 do { 
-    print('x is ', x, '\n'); 
-    x := x -1; 
-  }
-
-  call sub;
-"
-
-!try "d:= true;"
-!try "d:= false;"
-!try "d:= !true;"
-!try "d:= !false;"
-!try "d:= true && false;"
-!try "d:= true || false;"
-!try "
-  if 1 then print('hello\n');
-  if true then print('hello\n');
-  d:= true;
-  while d do {
-    print('Inside While Loop!\n');
-    println('Also Inside While Loop!');
-    d := false;
-  }
-"
-
-!try "x := 1; y:= ++x;"
-!try "x := 1; y:= --x;"
-!try "x := 1; y:= x++;"
-!try "x := 1; y:= x--;"
-
-!try "for(x:=0; x < 2; x++) do {println('hello'); println(x);}"
-
-!try "
-  x:='hello'; 
-  println(x);
-  println(x+x);
-  y:=x;
-
-  if x == y then {
-    println('match!');
-  }
-  else {
-    println('do not match!');
-  }
-
-  if x != y then {
-    println('match!');
-  }
-  else {
-    println('do not match!');
-  }
-"
-
-!try "
-  x := [];
-  println(x.length());
-  for(i:=0; i < 5; i++) do {
-    x.insert(0, i);
-  }
-  println(x.length());
-"
-
-!try "
-  y := [];
-  for(i:=0; i < 5; i++) do {
-    y.append(i);
-  }
-"
-
-!try "
-  x := [];
-  for(i:=0; i < 5; i++) do {
-    x.insert(0, i);
-  }
-  x.remove(3);
-"
-
-!try "
-  x := [];
-  for(i:=0; i < 5; i++) do {
-    x.insert(0, i);
-  }
-  x.pop(3);
-"
-
-!try "
-  x := [1,2,3];
-  x.remove(2);
-"
-
-!try "
-  play('B');
-  play('B', 'A');
-  play('B', 'A', 'D');
-"
-
-!try "x:=5;
- x < 10 ? println('true') : println('false');
-"
-
-!try "x := 15;
-
-if x < 5 then {
-  println('a');
-}
-else if x < 10 then {
-  println('b');
-}
-else if x < 15 then {
-  println('c');
-}
-else if x < 20 then {
-  println('d');
-}
-else {
-  println('e');
-}
-"
-
-!try "
-  try {
-    x := 5;
-    y := 'hello';
-
-    z := x + y;
-  }
-  catch {
-    println('an error occurred');
-  }
-  finally {
-    println('the end!');
-  }
-"
-
-!try "
-  try {
-    x := 5;
-    y := 10;
-
-    z := x + y;
-    println(z);
-  }
-  catch {
-    println('an error occurred');
-  }
-  finally {
-    println('the end!');
-  }
+    x := input('Enter an input:');
+    println(x);
 "
