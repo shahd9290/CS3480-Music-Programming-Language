@@ -80,8 +80,12 @@ statement ::=
 | trycatch
 
 trycatch ::=
-  'try' '{' statements!< '}' 'catch' '{'statements!< '}' 'finally' '{'statements!< '}' !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} finally {interpret(statements3);} !!
-| 'try' '{' statements!< '}' 'catch' '{'statements!< '}' !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} !!
+  'try' '{' statements!< '}' 
+  'catch' '{'statements!< '}' 
+  'finally' '{'statements!< '}'                          !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} finally {interpret(statements3);} !!
+
+| 'try' '{' statements!< '}' 
+  'catch' '{'statements!< '}'                            !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} !!
 
 functions ::= // Things that need the ; after if called individually, but not in ternary
   'plugin' '(' STRING_SQ ')'                            !! plugin(STRING_SQ1.v); !!
