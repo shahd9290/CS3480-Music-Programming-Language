@@ -2,8 +2,9 @@
 !! import java.util.Map; import java.util.HashMap; import java.util.ArrayList; import java.util.List; import java.util.Scanner; !!
 !! 
   interface lambdaInterface {
-    void foo();
-  }
+    void run(Object... args);
+}
+
 
   Map<String, Object> variables = new HashMap<>(); 
   Map<String, AbstractAttributeBlock> procedures = new HashMap<>();
@@ -93,7 +94,28 @@ trycatch ::=
   'catch' '{'statements!< '}'                           !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} !!
 
 lambdas <v:lambdaInterface> ::=
-  '()' '->' statement!<                                 !! lambdas.v = () -> interpret(statement1); !!
+  '()' '->' statement!<                                 !! lambdas.v = (Object... args) -> interpret(statement1); !!
+| '(' idList ')' '->' statement!<                       !!  ArrayList<String> names = idList1.v;
+                                                            lambdas.v = new lambdaInterface() {
+                                                              public void run(Object... args) {
+                                                                for (int i = 0; i < names.size(); i++) {
+                                                                  variables.put(names.get(i), args[i]);
+                                                                }
+                                                                interpret(statement1);
+                                                              }
+                                                            }; 
+                                                        !!                           
+
+idList <v:ArrayList> ::= 
+  ID                                                    !! idList.v = new ArrayList<>(); idList.v.add(ID1.v); !!
+| ID ',' idList                                         !! idList.v = idList1.v; idList.v.add(0, ID1.v); !!
+| #
+
+argList <v:ArrayList> ::= 
+  e0                                  !! argList.v = new ArrayList<>(); argList.v.add(e01.v); !!
+| e0 ',' argList                      !! argList.v = argList1.v; argList.v.add(0, e01.v); !!
+| #
+
 
 functions ::= // Things that need the ; after if called individually, but not in ternary
   'plugin' '(' STRING_SQ ')'                            !! plugin(STRING_SQ1.v); !!
@@ -102,7 +124,8 @@ functions ::= // Things that need the ; after if called individually, but not in
 | 'plugin' '(' STRING_SQ  ',' e0 ',' e0 ',' e0 ')'      !! plugin(STRING_SQ1.v, e01.v, e02.v, e03.v); !!
 | 'print' '(' printElements ')'                         
 | 'println' '(' printElementsLn ')' 
-| 'call' ID                                             !! if (procedures.containsKey(ID1.v)) {interpret(procedures.get(ID1.v));} else if (variables.containsKey(ID1.v) && variables.get(ID1.v) instanceof lambdaInterface l) {l.foo();} !! 
+|'call' ID '()'                                         !! if (variables.get(ID1.v) instanceof lambdaInterface l) {l.run();} else {interpret(procedures.get(ID1.v));}!!
+|'call' ID '(' argList ')'                              !! if (variables.get(ID1.v) instanceof lambdaInterface l) {l.run(argList1.v.toArray());} else {interpret(procedures.get(ID1.v));}!!
 | e7
 | lists
 | playElements

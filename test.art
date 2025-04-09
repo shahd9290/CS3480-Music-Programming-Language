@@ -27,7 +27,7 @@
 //     x := x -1; 
 //   }
 
-//   call sub;
+//   call sub();
 // "
 
 // !try "d:= true;"
@@ -177,7 +177,26 @@
 //     println(x);
 // "
 
+// !try "
+//     x := () -> { 
+//         println('hello');
+//         a := 5;
+//         println(a + 2); 
+//     };
+//     call x();
+// "
+
 !try "
-    x := () -> { println('hello'); };
-    call x;
+a := 5;
+b := 10;
+c := 15;
+
+y := (p) -> {println(p);};
+call y(a);
+
+y := (p, q, r) -> {
+    println(p + q + r);
+    
+};
+call y(a, b, c);
 "
