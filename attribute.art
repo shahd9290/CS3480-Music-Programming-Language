@@ -80,6 +80,11 @@ statement ::=
 | 'procedure' ID statement!<                            !! procedures.put(ID1.v, statement1); !!
 | '{' statements '}'           
 | functions';'                        
+| trycatch
+
+trycatch ::=
+  'try' '{' statements!< '}' 'catch' '{'statements!< '}' 'finally' '{'statements!< '}' !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} finally {interpret(statements3);} !!
+| 'try' '{' statements!< '}' 'catch' '{'statements!< '}' !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} !!
 
 functions ::= // Things that need the ; after if called individually, but not in ternary
   'plugin' '(' STRING_SQ ')'                            !! plugin(STRING_SQ1.v); !!
@@ -324,21 +329,52 @@ lists <v:Object> ::=
 //  x < 10 ? println('true') : println('false');
 // "
 
-!try "x := 15;
+// !try "x := 15;
 
-if x < 5 then {
-  println('a');
-}
-else if x < 10 then {
-  println('b');
-}
-else if x < 15 then {
-  println('c');
-}
-else if x < 20 then {
-  println('d');
-}
-else {
-  println('e')
-}
+// if x < 5 then {
+//   println('a');
+// }
+// else if x < 10 then {
+//   println('b');
+// }
+// else if x < 15 then {
+//   println('c');
+// }
+// else if x < 20 then {
+//   println('d');
+// }
+// else {
+//   println('e')
+// }
+// "
+
+!try "
+  try {
+    x := 5;
+    y := 'hello';
+
+    z := x + y;
+  }
+  catch {
+    println('an error occurred');
+  }
+  finally {
+    println('the end!');
+  }
+"
+
+!try "
+  try {
+    x := 5;
+    y := 10;
+
+    z := x + y;
+    println(z);
+  }
+  catch {
+    println('an error occurred');
+  }
+  finally {
+    println('the end!');
+  }
 "
