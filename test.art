@@ -186,17 +186,35 @@
 //     call x();
 // "
 
-!try "
-a := 5;
-b := 10;
-c := 15;
+// !try "
+// a := 5;
+// b := 10;
+// c := 15;
 
-y := (p) -> {println(p);};
-call y(a);
+// y := (p) -> {println(p);};
+// call y(a);
 
-y := (p, q, r) -> {
-    println(p + q + r);
+// y := (p, q, r) -> {
+//     println(p + q + r);
     
-};
-call y(a, b, c);
+// };
+// call y(a, b, c);
+// "
+
+!try "
+
+x := 5;
+
+// x:= 10;
+
+/* BLOCK
+
+COMMENT
+
+HERE
+
+*/
+
+println(x);
+
 "

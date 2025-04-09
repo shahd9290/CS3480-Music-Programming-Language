@@ -84,6 +84,8 @@ statement ::=
 | '{' statements '}'           
 | functions';'                        
 | trycatch
+| LINE_COMMENT
+| BLOCK_COMMENT
 
 trycatch ::=
   'try' '{' statements!< '}' 
@@ -112,8 +114,8 @@ idList <v:ArrayList> ::=
 | #
 
 argList <v:ArrayList> ::= 
-  e0                                  !! argList.v = new ArrayList<>(); argList.v.add(e01.v); !!
-| e0 ',' argList                      !! argList.v = argList1.v; argList.v.add(0, e01.v); !!
+  e0                                                    !! argList.v = new ArrayList<>(); argList.v.add(e01.v); !!
+| e0 ',' argList                                        !! argList.v = argList1.v; argList.v.add(0, e01.v); !!
 | #
 
 
@@ -225,6 +227,8 @@ REAL <v:double>      ::= &REAL                          !! REAL.v = Double.parse
 BOOLEAN <v:int>      ::= 
   'true'                                                !! BOOLEAN.v = 1; !! 
 | 'false'                                               !! BOOLEAN.v = 0; !!
+LINE_COMMENT <v:String> ::= &COMMENT_LINE_C             !! LINE_COMMENT.v = lexemeCore().translateEscapes(); !!
+BLOCK_COMMENT <v:String> ::= &COMMENT_BLOCK_C           !! BLOCK_COMMENT.v = lexemeCore().translateEscapes(); !!
 
 LIST <v:ArrayList>   ::= 
   '['']'                                                !! LIST.v = new ArrayList<Object>(); !!
