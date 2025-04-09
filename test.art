@@ -172,7 +172,12 @@
 //   }
 // "
 
+// !try "
+//     x := input('Enter an input:');
+//     println(x);
+// "
+
 !try "
-    x := input('Enter an input:');
-    println(x);
+    x := () -> { println('hello'); };
+    call x;
 "

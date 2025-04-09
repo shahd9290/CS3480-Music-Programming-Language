@@ -1,8 +1,12 @@
 !support
 !! import java.util.Map; import java.util.HashMap; import java.util.ArrayList; import java.util.List; import java.util.Scanner; !!
 !! 
+  interface lambdaInterface {
+    void foo();
+  }
+
   Map<String, Object> variables = new HashMap<>(); 
-  Map<String, AbstractAttributeBlock> procedures = new HashMap<>(); 
+  Map<String, AbstractAttributeBlock> procedures = new HashMap<>();
   Scanner scanner = new Scanner(System.in);
 
   void clear() {
@@ -83,10 +87,13 @@ statement ::=
 trycatch ::=
   'try' '{' statements!< '}' 
   'catch' '{'statements!< '}' 
-  'finally' '{'statements!< '}'                          !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} finally {interpret(statements3);} !!
+  'finally' '{'statements!< '}'                         !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} finally {interpret(statements3);} !!
 
 | 'try' '{' statements!< '}' 
-  'catch' '{'statements!< '}'                            !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} !!
+  'catch' '{'statements!< '}'                           !! try {interpret(statements1);} catch (Exception e) {interpret(statements2);} !!
+
+lambdas <v:lambdaInterface> ::=
+  '()' '->' statement!<                                 !! lambdas.v = () -> interpret(statement1); !!
 
 functions ::= // Things that need the ; after if called individually, but not in ternary
   'plugin' '(' STRING_SQ ')'                            !! plugin(STRING_SQ1.v); !!
@@ -95,7 +102,7 @@ functions ::= // Things that need the ; after if called individually, but not in
 | 'plugin' '(' STRING_SQ  ',' e0 ',' e0 ',' e0 ')'      !! plugin(STRING_SQ1.v, e01.v, e02.v, e03.v); !!
 | 'print' '(' printElements ')'                         
 | 'println' '(' printElementsLn ')' 
-| 'call' ID                                             !! interpret(procedures.get(ID1.v)); !! 
+| 'call' ID                                             !! if (procedures.containsKey(ID1.v)) {interpret(procedures.get(ID1.v));} else if (variables.containsKey(ID1.v) && variables.get(ID1.v) instanceof lambdaInterface l) {l.foo();} !! 
 | e7
 | lists
 | playElements
@@ -107,6 +114,7 @@ assign ::=
 | ID ':=' STRING_SQ ';'                                 !! variables.put(ID1.v, STRING_SQ1.v); !!
 | ID ':=' LIST ';'                                      !! variables.put(ID1.v, LIST1.v); !!
 | ID ':=' userIn ';'                                    !! variables.put(ID1.v, userIn1.v); !!
+| ID ':=' lambdas ';'                                   !! variables.put(ID1.v, lambdas1.v); !!
 
 userIn <v:String> ::=
   'input' '(' STRING_SQ ')'                             !! System.out.print(STRING_SQ1.v + " "); userIn.v = scanner.nextLine(); !!
