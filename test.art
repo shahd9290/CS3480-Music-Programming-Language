@@ -27,7 +27,7 @@
 //     x := x -1; 
 //   }
 
-//   call sub();
+//   sub();
 // "
 
 // !try "d:= true;"
@@ -183,7 +183,7 @@
 //         a := 5;
 //         println(a + 2); 
 //     };
-//     call x();
+//     x();
 // "
 
 // !try "
@@ -192,29 +192,53 @@
 // c := 15;
 
 // y := (p) -> {println(p);};
-// call y(a);
+// y(a);
 
 // y := (p, q, r) -> {
 //     println(p + q + r);
     
 // };
-// call y(a, b, c);
+// y(a, b, c);
+// "
+
+// !try "
+
+// x := 5;
+
+// // x:= 10;
+
+// /* BLOCK
+
+// COMMENT
+
+// HERE
+
+// */
+
+// println(x);
+
 // "
 
 !try "
 
-x := 5;
+function foo () {
+    x := 20;
+    return x;
+}
 
-// x:= 10;
+function bar () {
+    return 10;
+}
 
-/* BLOCK
+// function mee (a) {
+//     return a + 10;
+// }
 
-COMMENT
+a := foo();
+b := bar();
+// c := mee(20);
 
-HERE
-
-*/
-
-println(x);
-
+println(a);
+println(b);
+// println(c);
 "
