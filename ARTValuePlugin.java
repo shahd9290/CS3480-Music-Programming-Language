@@ -7,6 +7,8 @@
  *
 */
 
+import java.util.List;
+
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Synthesizer;
@@ -40,7 +42,75 @@ public class ARTValuePlugin extends AbstractValuePlugin {
     case "ding":
       play("D");
       break;
+    
+    case "playscale":
+      if (args.length == 3 && args[1] instanceof String note && args[2] instanceof String scaleName) {
+        Scale scale;
+        try {
+          scale = Scale.valueOf(scaleName.toUpperCase());
+          playScale(note, scale);
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown scale type: " + scaleName);
+        }
+      }
+      break;
+    
+    case "tune":
+      tune();
+      break;
+    
+    case "tunechordmajor":
+      tuneChordMajor();
+      break;
+    
+    case "tunechordminor":
+      tuneChordMinor();
+      break;
+    
+    case "arpeggiate":
+      for (Object note : (Object[]) args[1]) {
+        play((String) note);
+      }
+      break;
+    
 
+    
+    case "transpose":
+      Object[] transposeNotes = (Object[]) args[1];
+      int semitones = ((Number) args[2]).intValue();
+    
+      for (Object noteObj : transposeNotes) {
+        String note = (String) noteObj;
+        int key = noteNameToMidiKey(note, defaultOctave);
+        play(key + semitones);
+      }
+      break;
+    
+
+    case "tempo":
+    case "setbpm":
+        if (args.length == 2 && args[1] instanceof Integer bpm) {
+          setBpm(bpm);
+        }
+        break;
+      
+    case "loop":
+      if (args.length >= 3 && args[1] instanceof Integer count && args[2] instanceof String innerCall) {
+        for (int i = 0; i < count; i++) {
+          plugin(innerCall); // Or pass other args recursively if needed
+        }
+      }
+      break;
+
+    case "setoctave":
+      if (args.length == 2 && args[1] instanceof Integer o) setDefaultOctave(o);
+      break;
+    
+    case "setvelocity":
+      if (args.length == 2 && args[1] instanceof Integer v) setDefaultVelocity(v);
+      break;
+    
+      
     default:
       Util.fatal("Unknown plugin operation: " + args[0]);
     }

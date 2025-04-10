@@ -327,38 +327,64 @@
 // ASSERT(f, 1)
 // "
 
+// !try "
+//     procedure foo {
+//         for (i:=0; i< 10; i++) do {
+//             switch(i) {
+//                 case 0:
+//                     ASSERT(i, 0)
+//                 case 1:
+//                     ASSERT(i, 1)
+//                 case 2:
+//                     ASSERT(i, 2)
+//                 case 3:
+//                     ASSERT(i, 3)
+//                 case 4:
+//                     ASSERT(i, 4)
+//                 case 5:
+//                     ASSERT(i, 5)
+//                 case 6:
+//                     ASSERT(i, 6)
+//                 case 7:
+//                     ASSERT(i, 7)
+//                 case 8:
+//                     ASSERT(i, 8)
+//                 case 9:
+//                     ASSERT(i, 9)
+//                 default: 
+//                     ASSERT(i, 10)
+//             }
+//         }
+//     }
+
+//     foo();
+// "
+
+// !try "
+//     plugin('init');
+//     plugin('playscale', 'C', 'major');
+// "
+// !try"
+//     plugin('init');
+//     plugin('tune');
+// "
+// !try"
+//     plugin('init');
+//     plugin('tunechordmajor');
+// "
+// !try"
+//     plugin('init');
+//     plugin('tunechordminor');
+// "
+
+
 !try "
+plugin('init');
+plugin('setbpm', 140);
+plugin('setoctave', 4);
 
+plugin('arpeggiate', ['A', 'A#', 'B', 'B#', 'C', 'C#', 'D', 'D#', 'E', 'E#', 'F', 'F#', 'G', 'G#']);
+plugin('transpose', ['C', 'D', 'E'], 2);
 
-
-procedure foo {
-    for (i:=0; i< 10; i++) do {
-        switch(i) {
-            case 0:
-                ASSERT(i, 0)
-            case 1:
-                ASSERT(i, 1)
-            case 2:
-                ASSERT(i, 2)
-            case 3:
-                ASSERT(i, 3)
-            case 4:
-                ASSERT(i, 4)
-            case 5:
-                ASSERT(i, 5)
-            case 6:
-                ASSERT(i, 6)
-            case 7:
-                ASSERT(i, 7)
-            case 8:
-                ASSERT(i, 8)
-            case 9:
-                ASSERT(i, 9)
-            default: 
-                ASSERT(i, 10)
-        }
-    }
-}
-
-foo();
+plugin('loop', 3, 'tunechordminor');
 "

@@ -174,6 +174,8 @@ idList <v:ArrayList> ::=
 argList <v:ArrayList> ::= 
   e0                                                    !! argList.v = new ArrayList<>(); argList.v.add(e01.v); !!
 | e0 ',' argList                                        !! argList.v = argList1.v; argList.v.add(0, e01.v); !!
+| LIST                                                  !! argList.v = LIST1.v; !!
+| LIST ',' argList                                      !! argList.v = argList1.v; argList.v.addAll(LIST1.v); !!
 
 functions <v:Object> ::=
   'procedure' ID statement!<                             !! procedures.put(ID1.v, statement1); !!
@@ -215,10 +217,9 @@ funcCall <v:Object> ::=
 funcstmt ::= statements returnstmt | returnstmt
 
 methods ::= // Things that need the ; after if called individually, but not in ternary
-  'plugin' '(' STRING_SQ ')'                            !! plugin(STRING_SQ1.v); !!
-| 'plugin' '(' STRING_SQ ',' e0 ')'                     !! plugin(STRING_SQ1.v, e01.v); !!
-| 'plugin' '(' STRING_SQ ',' e0 ',' e0 ')'              !! plugin(STRING_SQ1.v, e01.v, e02.v); !!
-| 'plugin' '(' STRING_SQ  ',' e0 ',' e0 ',' e0 ')'      !! plugin(STRING_SQ1.v, e01.v, e02.v, e03.v); !!
+  'plugin' '(' e5 ')'                            !! plugin(e51.v); !!
+| 'plugin' '(' e5 ',' e5  ')'          !! plugin(e51.v, e52.v); !!
+| 'plugin' '(' e5 ',' e5 ',' e5 ')'          !! plugin(e51.v, e52.v, e53.v); !!
 | 'print' '(' printElements ')'                         
 | 'println' '(' printElementsLn ')' 
 | e7
@@ -296,9 +297,12 @@ e5 <v:Object> ::=
   e6                                                    !! e5.v = e61.v; !!
 | INTEGER                                               !! e5.v = INTEGER1.v; !!
 | REAL                                                  !! e5.v = REAL1.v; !!
+| STRING_SQ                                             !! e5.v = STRING_SQ1.v; !!
 | ID                                                    !! e5.v = variables.get(ID1.v);!!
+| LIST                                                  !! e5.v = LIST1.v.toArray(); !!
 | '(' e1 ')'                                            !! e5.v = e11.v; !!
-| 'plugin' '(' STRING_SQ ',' e0 ')'                     !! e5.v = (Number) plugin(STRING_SQ1.v, e01.v); !!
+| 'plugin' '(' STRING_SQ ',' e0 ')'                     !! e5.v = plugin(STRING_SQ1.v, e01.v); !!
+
 
 e6 <v:int> ::=
   e7                                                    !! e6.v = e71.v; !!
