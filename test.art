@@ -380,11 +380,14 @@
 
 !try "
 plugin('init');
-plugin('setbpm', 140);
-plugin('setoctave', 4);
+// plugin('setbpm', 140);
+// plugin('setoctave', 4);
 
-plugin('arpeggiate', ['A', 'A#', 'B', 'B#', 'C', 'C#', 'D', 'D#', 'E', 'E#', 'F', 'F#', 'G', 'G#']);
-plugin('transpose', ['C', 'D', 'E'], 2);
+// plugin('arpeggiate', ['A', 'A#', 'B', 'B#', 'C', 'C#', 'D', 'D#', 'E', 'E#', 'F', 'F#', 'G', 'G#']);
+// plugin('transpose', ['C', 'D', 'E'], 2);
 
-plugin('loop', 3, 'tunechordminor');
+// plugin('loop', 3, 'tunechordminor');
+
+plugin('bridge', ['Am', 'F', 'C', 'G']);
+
 "

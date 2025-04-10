@@ -110,6 +110,23 @@ public class ARTValuePlugin extends AbstractValuePlugin {
       if (args.length == 2 && args[1] instanceof Integer v) setDefaultVelocity(v);
       break;
     
+    case "bridge":
+      if (args.length < 2 || !(args[1] instanceof Object[]))
+        Util.fatal("bridge expects a list of note names as an array");
+    
+      Object[] bridgeNotes = (Object[]) args[1];
+      for (Object o : bridgeNotes) {
+        if (o instanceof String noteStr) {
+          // Optional: check if ends with 'm' for minor
+          if (noteStr.endsWith("m")) {
+            playChord(noteStr.substring(0, noteStr.length() - 1), Chord.MINOR);
+          } else {
+            playChord(noteStr, Chord.MAJOR);
+          }
+        }
+      }
+      break;
+    
       
     default:
       Util.fatal("Unknown plugin operation: " + args[0]);
