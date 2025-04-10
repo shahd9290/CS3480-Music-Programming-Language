@@ -425,23 +425,23 @@ setbpm(100);
 setoctave(4);
 
 setinstrument('Electric Piano 2');
-arpeggiate(['A', 'C#', 'E']);     // A major arpeggio
+arpeggiate(['A', 'C#', 'E']);     
 rest(1);
-arpeggiate(['F#m', 'D']);         // a quick moody jump
+arpeggiate(['F#m', 'D']);        
 rest(1);
 
 setinstrument('Viola');
-bridge(['F#m', 'D', 'A', 'E']);   // Classic emotional progression
+bridge(['F#m', 'D', 'A', 'E']);   
 rest(2);
 
 setinstrument('Overdriven Guitar');
-loop(2, 'tunechordminor');        // double punch with minor chords
+loop(2, 'tunechordminor');       
 rest(1);
 
 setinstrument('Trumpet');
-transpose(['C', 'E', 'G'], 1);    // a jazzy shift
+transpose(['C', 'E', 'G'], 1);  
 rest(1);
-transpose(['B', 'D', 'F#'], 1);   // brightens things up
+transpose(['B', 'D', 'F#'], 1);  
 rest(1);
 
 setinstrument('Electric Piano 1');
