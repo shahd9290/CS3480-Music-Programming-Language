@@ -1,6 +1,7 @@
 !support
 !! import java.util.Map; import java.util.HashMap; import java.util.ArrayList; import java.util.List; import java.util.Scanner; !!
 !!
+
   
   interface lambdaInterface {
     void run(Object... args);
@@ -261,9 +262,26 @@ printElementsLn ::=
 | lists                                                 !! System.out.println(lists1.v); !! ',' printElementsLn 
 
 playElements ::=
-  'play' '(' STRING_SQ ')'                              !! plugin("init"); plugin("play", STRING_SQ1.v); !!
-| 'play' '(' STRING_SQ ',' STRING_SQ ')'                !! plugin("init"); plugin("play", STRING_SQ1.v, STRING_SQ2.v); !!
-| 'play' '(' STRING_SQ ',' STRING_SQ ',' STRING_SQ ')'  !! plugin("init"); plugin("play", STRING_SQ1.v, STRING_SQ2.v, STRING_SQ3.v); !!
+  'play' '(' STRING_SQ ')'                              !! plugin("play", STRING_SQ1.v); !!
+| 'play' '(' STRING_SQ ',' STRING_SQ ')'                !! plugin("play", STRING_SQ1.v, STRING_SQ2.v); !!
+| 'play' '(' STRING_SQ ',' STRING_SQ ',' STRING_SQ ')'  !! plugin("play", STRING_SQ1.v, STRING_SQ2.v, STRING_SQ3.v); !!
+| 'init()'                                              !! plugin("init"); !!
+| 'tune()'                                              !! plugin("tune"); !!
+| 'tunechordmajor()'                                    !! plugin("tunechordmajor"); !!
+| 'tunechordminor()'                                    !! plugin("tunechordminor"); !!
+| 'ding()'                                              !! plugin("ding"); !!
+
+| 'setbpm' '(' e0 ')'                                   !! plugin("setbpm", e01.v); !!
+| 'setoctave' '(' e0 ')'                                !! plugin("setoctave", e01.v); !!
+| 'setvelocity' '(' e0 ')'                              !! plugin("setvelocity", e01.v); !!
+| 'setinstrument' '(' e0 ')'                            !! plugin("setinstrument", e01.v); !!
+
+| 'playscale' '(' e0 ',' e0 ')'                         !! plugin("playscale", e01.v, e02.v); !!
+| 'transpose' '(' e0 ',' e0 ')'                         !! plugin("transpose", e01.v, e02.v); !!
+| 'arpeggiate' '(' e0 ')'                               !! plugin("arpeggiate", e01.v); !!
+| 'bridge' '(' e0 ')'                                   !! plugin("bridge", e01.v); !!
+| 'loop' '(' e0 ',' e0 ')'                              !! plugin("loop", e01.v, e02.v); !!
+| 'rest' '('e0 ')'                                      !! plugin("rest", e01.v); !!
 
 e0 <v:Object> ::= 
   e1                                                    !! e0.v = e11.v; !!

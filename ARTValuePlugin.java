@@ -171,6 +171,11 @@ public class ARTValuePlugin extends AbstractValuePlugin {
       }
       break;
     
+    case "rest":
+      rest((int) args[1]);
+      break;
+    
+
     default:
       Util.fatal("Unknown plugin operation: " + args[0]);
     }

@@ -128,6 +128,7 @@
 // "
 
 // !try "
+//   init();
 //   play('B');
 //   play('B', 'A');
 //   play('B', 'A', 'D');
@@ -391,16 +392,61 @@
 // plugin('bridge', ['Am', 'F', 'C', 'G']);
 // "
 
+// !try "
+// plugin('init');
+// plugin('setinstrument', 'Overdriven Guitar');
+// plugin('bridge', ['Am', 'F', 'C', 'G']);
+// plugin('setinstrument', 'Violin');
+// plugin('bridge', ['Am', 'F', 'C', 'G']);
+// "
+
+// !try "
+// init();
+// setinstrument('Violin');
+// bridge(['Am', 'F', 'C', 'G']);
+// "
+
+// !try "
+// init();
+// setbpm(100);
+// setoctave(4);
+// setinstrument('Electric Piano 2');
+
+// playscale('C', 'major');
+// arpeggiate(['C', 'E', 'G']);
+// transpose(['C', 'D', 'E'], 2);
+// bridge(['Am', 'F', 'C', 'G']);
+// loop(3, 'tunechordminor');
+// "
+
 !try "
-plugin('init');
+init();
+setbpm(100);
+setoctave(4);
 
-plugin('setinstrument', 'Overdriven Guitar');
+setinstrument('Electric Piano 2');
+arpeggiate(['A', 'C#', 'E']);     // A major arpeggio
+rest(1);
+arpeggiate(['F#m', 'D']);         // a quick moody jump
+rest(1);
 
-plugin('bridge', ['Am', 'F', 'C', 'G']);
+setinstrument('Viola');
+bridge(['F#m', 'D', 'A', 'E']);   // Classic emotional progression
+rest(2);
 
-plugin('setinstrument', 'Violin');
+setinstrument('Overdriven Guitar');
+loop(2, 'tunechordminor');        // double punch with minor chords
+rest(1);
 
-plugin('bridge', ['Am', 'F', 'C', 'G']);
+setinstrument('Trumpet');
+transpose(['C', 'E', 'G'], 1);    // a jazzy shift
+rest(1);
+transpose(['B', 'D', 'F#'], 1);   // brightens things up
+rest(1);
+
+setinstrument('Electric Piano 1');
+playscale('A', 'minor_melodic_descending');
+rest(2);
 
 
 "
