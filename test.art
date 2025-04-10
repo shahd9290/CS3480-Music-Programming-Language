@@ -378,8 +378,8 @@
 // "
 
 
-!try "
-plugin('init');
+// !try "
+// plugin('init');
 // plugin('setbpm', 140);
 // plugin('setoctave', 4);
 
@@ -388,6 +388,19 @@ plugin('init');
 
 // plugin('loop', 3, 'tunechordminor');
 
+// plugin('bridge', ['Am', 'F', 'C', 'G']);
+// "
+
+!try "
+plugin('init');
+
+plugin('setinstrument', 'Overdriven Guitar');
+
 plugin('bridge', ['Am', 'F', 'C', 'G']);
+
+plugin('setinstrument', 'Violin');
+
+plugin('bridge', ['Am', 'F', 'C', 'G']);
+
 
 "

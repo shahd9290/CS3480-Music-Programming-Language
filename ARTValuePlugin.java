@@ -7,7 +7,9 @@
  *
 */
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
@@ -17,6 +19,31 @@ import uk.ac.rhul.cs.csle.art.term.AbstractValuePlugin;
 import uk.ac.rhul.cs.csle.art.util.Util;
 
 public class ARTValuePlugin extends AbstractValuePlugin {
+
+  static final Map<String, Integer> instrumentMap = new HashMap<>();
+  static {
+    instrumentMap.put("Acoustic Grand", 0);
+    instrumentMap.put("Bright Acoustic", 1);
+    instrumentMap.put("Electric Grand", 2);
+    instrumentMap.put("Honky-Tonk", 3);
+    instrumentMap.put("Electric Piano 1", 4);
+    instrumentMap.put("Electric Piano 2", 5);
+    instrumentMap.put("Harpsichord", 6);
+    instrumentMap.put("Clavinet", 7);
+    instrumentMap.put("Violin", 40);
+    instrumentMap.put("Viola", 41);
+    instrumentMap.put("Cello", 42);
+    instrumentMap.put("Contrabass", 43);
+    instrumentMap.put("Tremolo Strings", 44);
+    instrumentMap.put("Pizzicato Strings", 45);
+    instrumentMap.put("Harp", 46);
+    instrumentMap.put("Trumpet", 56);
+    instrumentMap.put("Trombone", 57);
+    instrumentMap.put("Overdriven Guitar", 29);
+  }
+
+
+
   @Override
   public String description() {
     return "Adrian's example music plugin";
@@ -127,7 +154,23 @@ public class ARTValuePlugin extends AbstractValuePlugin {
       }
       break;
     
-      
+    case "setinstrument":
+      Object instArg = args[1];
+      int programNumber = -1;
+    
+      if (instArg instanceof String name && instrumentMap.containsKey(name)) {
+        programNumber = instrumentMap.get(name);
+      } else if (instArg instanceof Number num) {
+        programNumber = num.intValue();
+      } else {
+        Util.fatal("Invalid instrument argument: " + instArg);
+      }
+    
+      for (MidiChannel channel : channels) {
+        if (channel != null) channel.programChange(programNumber);
+      }
+      break;
+    
     default:
       Util.fatal("Unknown plugin operation: " + args[0]);
     }
