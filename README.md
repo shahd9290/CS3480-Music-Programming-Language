@@ -1,3 +1,5 @@
+# CS3480 - Software Language Engineering, MIDI Programming Language
+
 For my CS3480 - Software Language Engineering module, we were tasked with using the [ART](https://github.com/AJohnstone2007/ART) (Ambiguity Retained Translation) toolkit to assist in developing the syntax for a partiular programming language fitting one of three themes. The theme I had chosen in this context was to develop a Music Programming Language.
 
 This was an individual project and took place throughout the duration of the term. The language is written using ART syntax, and is converted to corresponding Java code via the included `art.jar` file, before being executed. A plugin file has been provided to facilitate additional features that cannot be executed directly in ART syntax. 
